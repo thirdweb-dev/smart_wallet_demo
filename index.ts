@@ -40,13 +40,14 @@ const main = async () => {
       bundlerUrl,
       paymasterAPI: getVerifyingPaymaster(paymasterUrl, entryPointAddress),
       factoryAddress,
-      factoryAbi: SimpleAccountFactory__factory.abi,
-      accountAbi: SimpleAccount__factory.abi,
+      factoryAbi: SimpleAccountFactory__factory.abi, // TODO pass our own abi
+      accountAbi: SimpleAccount__factory.abi, // TODO pass our own abi
     };
     const aaProvider = await create4337Provider(config);
 
     // now use the SDK normally
     const sdk = ThirdwebSDK.fromSigner(aaProvider.getSigner());
+
     console.log("signer addr", await wallet.getAddress());
     console.log("smart wallet addr", await sdk.wallet.getAddress());
     console.log("balance", (await sdk.wallet.balance()).displayValue);
