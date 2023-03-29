@@ -3,14 +3,14 @@ import { ThirdwebSDK } from "@thirdweb-dev/sdk";
 import { getVerifyingPaymaster } from "./lib/paymaster";
 import {
   create4337Provider,
-  deploySimpleAccountFactory,
   ProviderConfig,
 } from "./lib/provider";
-import {
-  SimpleAccount__factory,
-  SimpleAccountFactory__factory,
-} from "@account-abstraction/contracts";
+
 import { createOrRecoverWallet } from "./lib/utils";
+
+// ABIs
+import TWAccountFactory from "./artifacts/TWAccountFactory.json";
+import TWAccountRouter from "./artifacts/TWAccountRouter.json";
 
 config();
 
@@ -25,12 +25,9 @@ const main = async () => {
     const bundlerUrl = `https://node.stackup.sh/v1/rpc/${stackup_key}`;
     const paymasterUrl = `https://app.stackup.sh/api/v2/paymaster/payg/${stackup_key}`;
 
-    // deploy the account factory if not there already
-    // TODO where does this fit in the flow?
-    const factoryAddress = await deploySimpleAccountFactory(
-      "goerli",
-      entryPointAddress
-    );
+    // TODO: deploy or fetch a factory programatically for the given chain.
+    // This factory is a `TWAccountFactory` deployed on Goerli.
+    const factoryAddress = "0x1F648fFdDC74b9f1c273B92F2d0D9F8a3F1c844E"
 
     // Create the AA provider
     const config: ProviderConfig = {
@@ -40,8 +37,8 @@ const main = async () => {
       bundlerUrl,
       paymasterAPI: getVerifyingPaymaster(paymasterUrl, entryPointAddress),
       factoryAddress,
-      factoryAbi: SimpleAccountFactory__factory.abi, // TODO pass our own abi
-      accountAbi: SimpleAccount__factory.abi, // TODO pass our own abi
+      factoryAbi: TWAccountFactory.abi, 
+      accountAbi: TWAccountRouter.abi,
     };
     const aaProvider = await create4337Provider(config);
 
@@ -60,6 +57,7 @@ const main = async () => {
     console.time("claim");
     console.time("prepare");
     const tx = await contract.erc20.claim.prepare(1);
+    tx.setOverrides({ gasLimit: 600000 });
     console.timeEnd("prepare");
     console.time("send");
     const t = await tx.send();

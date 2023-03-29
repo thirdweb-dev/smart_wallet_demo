@@ -3,13 +3,14 @@ import {
   BaseAccountAPI,
 } from "@account-abstraction/sdk/dist/src/BaseAccountAPI";
 import {
-  Abi,
   ChainOrRpcUrl,
   SmartContract,
   ThirdwebSDK,
 } from "@thirdweb-dev/sdk";
-import { Signer, BigNumberish, BigNumber, ContractInterface } from "ethers";
+import { Signer, BigNumberish, BigNumber, ContractInterface, ethers } from "ethers";
 import { arrayify, hexConcat } from "ethers/lib/utils";
+
+import TWAccountRouter from "../artifacts/TWAccountRouter.json";
 
 export interface AccountApiParams extends Omit<BaseApiParams, "provider"> {
   chain: ChainOrRpcUrl;
@@ -66,10 +67,21 @@ export class AccountAPI extends BaseAccountAPI {
     }
     console.log("AccountAPI - Creating account via factory");
     // TODO here the createAccount expects owner + salt as arguments, but could be different
+    // const tx = factory.prepare("createAccount", [
+    //   await this.params.localSigner.getAddress(),
+    //   0, // salt
+    // ]);
+
+
+    const localSigner = await this.params.localSigner.getAddress();
+    const salt = ethers.utils.formatBytes32String("random-salt");
+    const initData = new ethers.utils.Interface(TWAccountRouter.abi).encodeFunctionData("initialize", [localSigner, "URI"]);
+
     const tx = factory.prepare("createAccount", [
-      await this.params.localSigner.getAddress(),
-      0, // salt
+      salt,
+      initData,
     ]);
+
     console.log("Cost to create account: ", await tx.estimateGasCost());
     return hexConcat([factory.getAddress(), tx.encode()]);
   }
