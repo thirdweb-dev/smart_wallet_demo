@@ -15,8 +15,6 @@ import { ChainOrRpcUrl, getChainProvider } from "@thirdweb-dev/sdk";
 import { AccountAPI } from "./account";
 import { ContractInterface } from "ethers";
 
-import TWAccountFactory from "../artifacts/TWAccountFactory.json";
-
 export interface ProviderConfig {
   /**
    * the chain to use
@@ -81,7 +79,7 @@ export async function create4337Provider(
     factoryAddress: config.factoryAddress,
     paymasterAPI: config.paymasterAPI,
     accountAbi: config.accountAbi,
-    factoryAbi: TWAccountFactory.abi,
+    factoryAbi: config.factoryAbi,
   });
 
   const chainId = await accountApi.getChainId();

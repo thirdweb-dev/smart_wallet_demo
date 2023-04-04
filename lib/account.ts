@@ -2,12 +2,14 @@ import {
   BaseApiParams,
   BaseAccountAPI,
 } from "@account-abstraction/sdk/dist/src/BaseAccountAPI";
+import { ChainOrRpcUrl, SmartContract, ThirdwebSDK } from "@thirdweb-dev/sdk";
 import {
-  ChainOrRpcUrl,
-  SmartContract,
-  ThirdwebSDK,
-} from "@thirdweb-dev/sdk";
-import { Signer, BigNumberish, BigNumber, ContractInterface, ethers } from "ethers";
+  Signer,
+  BigNumberish,
+  BigNumber,
+  ContractInterface,
+  ethers,
+} from "ethers";
 import { arrayify, hexConcat } from "ethers/lib/utils";
 
 import TWAccountRouter from "../artifacts/TWAccountRouter.json";
@@ -65,24 +67,27 @@ export class AccountAPI extends BaseAccountAPI {
     } else {
       factory = await this.sdk.getContract(this.params.factoryAddress);
     }
-    console.log("AccountAPI - Creating account via factory");
+    console.log("AccountAPI - Preparing account tx via factory");
     // TODO here the createAccount expects owner + salt as arguments, but could be different
     // const tx = factory.prepare("createAccount", [
     //   await this.params.localSigner.getAddress(),
     //   0, // salt
     // ]);
 
-
     const localSigner = await this.params.localSigner.getAddress();
-    const salt = ethers.utils.formatBytes32String("random-salt");
-    const initData = new ethers.utils.Interface(TWAccountRouter.abi).encodeFunctionData("initialize", [localSigner, "URI"]);
+    const salt = ethers.utils.formatBytes32String(`random-salt`); // TODO this needs to be unique AND 32 bytes...
+    const initData = new ethers.utils.Interface(
+      TWAccountRouter.abi
+    ).encodeFunctionData("initialize", [localSigner, ""]);
 
-    const tx = factory.prepare("createAccount", [
-      salt,
-      initData,
-    ]);
+    const tx = factory.prepare("createAccount", [salt, initData]);
 
-    console.log("Cost to create account: ", await tx.estimateGasCost());
+    try {
+      console.log("Cost to create account: ", await tx.estimateGasCost());
+    } catch (e) {
+      // TODO using the same salt twice reverts
+    }
+
     return hexConcat([factory.getAddress(), tx.encode()]);
   }
 

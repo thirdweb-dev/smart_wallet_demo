@@ -1,10 +1,7 @@
 import { config } from "dotenv";
 import { ThirdwebSDK } from "@thirdweb-dev/sdk";
 import { getVerifyingPaymaster } from "./lib/paymaster";
-import {
-  create4337Provider,
-  ProviderConfig,
-} from "./lib/provider";
+import { create4337Provider, ProviderConfig } from "./lib/provider";
 
 import { createOrRecoverWallet } from "./lib/utils";
 
@@ -27,7 +24,7 @@ const main = async () => {
 
     // TODO: deploy or fetch a factory programatically for the given chain.
     // This factory is a `TWAccountFactory` deployed on Goerli.
-    const factoryAddress = "0x1F648fFdDC74b9f1c273B92F2d0D9F8a3F1c844E"
+    const factoryAddress = "0x1F648fFdDC74b9f1c273B92F2d0D9F8a3F1c844E";
 
     // Create the AA provider
     const config: ProviderConfig = {
@@ -37,7 +34,7 @@ const main = async () => {
       bundlerUrl,
       paymasterAPI: getVerifyingPaymaster(paymasterUrl, entryPointAddress),
       factoryAddress,
-      factoryAbi: TWAccountFactory.abi, 
+      factoryAbi: TWAccountFactory.abi,
       accountAbi: TWAccountRouter.abi,
     };
     const aaProvider = await create4337Provider(config);
@@ -57,7 +54,7 @@ const main = async () => {
     console.time("claim");
     console.time("prepare");
     const tx = await contract.erc20.claim.prepare(1);
-    tx.setOverrides({ gasLimit: 600000 });
+    tx.setOverrides({ gasLimit: 600000 }); // TODO this is only works for the first account tx, SDK fails to estimate the account deployment gas internally
     console.timeEnd("prepare");
     console.time("send");
     const t = await tx.send();
