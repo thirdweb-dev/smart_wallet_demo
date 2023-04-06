@@ -9,7 +9,7 @@ config();
 const main = async () => {
   try {
     // Local signer
-    let wallet = await createOrRecoverWallet();
+    let localWallet = await createOrRecoverWallet();
 
     // AA Config
     const stackup_key = process.env.STACKUP_KEY as string;
@@ -27,15 +27,14 @@ const main = async () => {
       apiKey: stackup_key,
       chain: "goerli",
       gasless: true,
-      localSigner: wallet,
       factoryAddress,
     };
-    const smartWallet = new SmartWallet(config);
+    const smartWallet = SmartWallet.fromLocalWallet(config, localWallet);
 
     // now use the SDK normally
     const sdk = await ThirdwebSDK.fromWallet(smartWallet, "goerli");
 
-    console.log("signer addr", await wallet.getAddress());
+    console.log("signer addr", await localWallet.getAddress());
     console.log("smart wallet addr", await sdk.wallet.getAddress());
     console.log("balance", (await sdk.wallet.balance()).displayValue);
 
@@ -44,6 +43,9 @@ const main = async () => {
       "0xc54414e0E2DBE7E9565B75EFdC495c7eD12D3823"
     );
     console.timeEnd("contract");
+
+    const tokenBalance = await contract.erc20.balance();
+    console.log("token balance", tokenBalance.displayValue);
     console.time("claim");
     console.time("prepare");
     const tx = await contract.erc20.claim.prepare(1);

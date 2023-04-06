@@ -13,7 +13,6 @@ import { ProviderConfig, create4337Provider } from "./provider-utils";
 export type SmartWalletConfig = {
   apiKey: string;
   gasless: boolean;
-  localSigner: Signer;
   chain: ChainOrRpcUrl;
   factoryAddress: string;
   factoryAbi?: string;
@@ -22,17 +21,32 @@ export type SmartWalletConfig = {
 };
 
 export class SmartWallet extends AbstractWallet {
-  private providerConfig: ProviderConfig;
+  static fromLocalWallet(
+    config: SmartWalletConfig,
+    localSigner: Signer
+  ): SmartWallet {
+    const wallet = new SmartWallet(config);
+    wallet.connect(localSigner);
+    return wallet;
+  }
+
+  private config: SmartWalletConfig;
+  private providerConfig: ProviderConfig | undefined;
   private aaProvider: ERC4337EthersProvider | undefined;
 
   constructor(config: SmartWalletConfig) {
     super();
+    this.config = config;
+  }
+
+  connect(localSigner: Signer) {
+    const config = this.config;
     const bundlerUrl = `https://node.stackup.sh/v1/rpc/${config.apiKey}`;
     const paymasterUrl = `https://app.stackup.sh/api/v2/paymaster/payg/${config.apiKey}`;
     const entryPointAddress = config.entryPointAddress || ENTRYPOINT_ADDRESS;
     this.providerConfig = {
       chain: config.chain,
-      localSigner: config.localSigner,
+      localSigner,
       entryPointAddress,
       bundlerUrl,
       paymasterAPI: config.gasless
@@ -45,6 +59,9 @@ export class SmartWallet extends AbstractWallet {
   }
 
   async getSigner(): Promise<Signer> {
+    if (!this.providerConfig) {
+      throw new Error("Local Signer not connected");
+    }
     let provider = this.aaProvider;
     if (!provider) {
       provider = await create4337Provider(this.providerConfig);
