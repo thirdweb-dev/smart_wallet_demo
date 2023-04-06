@@ -1,16 +1,8 @@
 import { config } from "dotenv";
 import { ThirdwebSDK } from "@thirdweb-dev/sdk";
-import { getVerifyingPaymaster } from "./lib/paymaster";
-import {
-  create4337Provider,
-  deploySimpleAccountFactory,
-  ProviderConfig,
-} from "./lib/provider";
-import {
-  SimpleAccount__factory,
-  SimpleAccountFactory__factory,
-} from "@account-abstraction/contracts";
+import { deploySimpleAccountFactory } from "./lib/provider-utils";
 import { createOrRecoverWallet } from "./lib/utils";
+import { SmartWallet, SmartWalletConfig } from "./lib/wallet";
 
 config();
 
@@ -22,8 +14,6 @@ const main = async () => {
     // AA Config
     const stackup_key = process.env.STACKUP_KEY as string;
     const entryPointAddress = "0x0576a174D229E3cFA37253523E645A78A0C91B57";
-    const bundlerUrl = `https://node.stackup.sh/v1/rpc/${stackup_key}`;
-    const paymasterUrl = `https://app.stackup.sh/api/v2/paymaster/payg/${stackup_key}`;
 
     // deploy the account factory if not there already
     // TODO where does this fit in the flow?
@@ -33,20 +23,17 @@ const main = async () => {
     );
 
     // Create the AA provider
-    const config: ProviderConfig = {
+    const config: SmartWalletConfig = {
+      apiKey: stackup_key,
       chain: "goerli",
+      gasless: true,
       localSigner: wallet,
-      entryPointAddress,
-      bundlerUrl,
-      paymasterAPI: getVerifyingPaymaster(paymasterUrl, entryPointAddress),
       factoryAddress,
-      factoryAbi: SimpleAccountFactory__factory.abi, // TODO pass our own abi
-      accountAbi: SimpleAccount__factory.abi, // TODO pass our own abi
     };
-    const aaProvider = await create4337Provider(config);
+    const smartWallet = new SmartWallet(config);
 
     // now use the SDK normally
-    const sdk = ThirdwebSDK.fromSigner(aaProvider.getSigner());
+    const sdk = await ThirdwebSDK.fromWallet(smartWallet, "goerli");
 
     console.log("signer addr", await wallet.getAddress());
     console.log("smart wallet addr", await sdk.wallet.getAddress());

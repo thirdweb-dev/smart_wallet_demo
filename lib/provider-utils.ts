@@ -6,7 +6,6 @@ import {
 } from "@account-abstraction/contracts";
 import { Signer } from "@ethersproject/abstract-signer";
 import {
-  ERC4337EthersProvider,
   DeterministicDeployer,
   HttpRpcClient,
   PaymasterAPI,
@@ -14,6 +13,7 @@ import {
 import { ChainOrRpcUrl, getChainProvider } from "@thirdweb-dev/sdk";
 import { AccountAPI } from "./account";
 import { ContractInterface } from "ethers";
+import { ERC4337EthersProvider } from "./erc4337-provider";
 
 export interface ProviderConfig {
   /**

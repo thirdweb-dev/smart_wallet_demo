@@ -2,12 +2,7 @@ import {
   BaseApiParams,
   BaseAccountAPI,
 } from "@account-abstraction/sdk/dist/src/BaseAccountAPI";
-import {
-  Abi,
-  ChainOrRpcUrl,
-  SmartContract,
-  ThirdwebSDK,
-} from "@thirdweb-dev/sdk";
+import { ChainOrRpcUrl, SmartContract, ThirdwebSDK } from "@thirdweb-dev/sdk";
 import { Signer, BigNumberish, BigNumber, ContractInterface } from "ethers";
 import { arrayify, hexConcat } from "ethers/lib/utils";
 
