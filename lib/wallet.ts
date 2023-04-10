@@ -1,14 +1,14 @@
 import { ERC4337EthersProvider } from "@account-abstraction/sdk";
-import {
-  SimpleAccountFactory__factory,
-  SimpleAccount__factory,
-} from "@account-abstraction/contracts";
+
 import { ChainOrRpcUrl } from "@thirdweb-dev/sdk";
 import { AbstractWallet } from "@thirdweb-dev/wallets/evm/wallets/abstract";
 import { Signer } from "ethers";
 import { ENTRYPOINT_ADDRESS } from "./constants";
 import { getVerifyingPaymaster } from "./paymaster";
 import { ProviderConfig, create4337Provider } from "./provider-utils";
+
+import TWAccountFactory from "../artifacts/TWAccountFactory.json";
+import TWAccount from "../artifacts/TWAccount.json";
 
 export type SmartWalletConfig = {
   apiKey: string;
@@ -53,8 +53,8 @@ export class SmartWallet extends AbstractWallet {
         ? getVerifyingPaymaster(paymasterUrl, entryPointAddress)
         : undefined,
       factoryAddress: config.factoryAddress,
-      factoryAbi: config.factoryAbi || SimpleAccountFactory__factory.abi, // TODO pass our own abi
-      accountAbi: config.accountAbi || SimpleAccount__factory.abi, // TODO pass our own abi
+      factoryAbi: config.factoryAbi || TWAccountFactory.abi,
+      accountAbi: config.accountAbi || TWAccount.abi,
     };
   }
 
