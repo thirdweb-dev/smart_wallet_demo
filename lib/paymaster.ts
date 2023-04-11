@@ -58,7 +58,8 @@ class VerifyingPaymasterAPI extends PaymasterAPI {
         method: "pm_sponsorUserOperation",
         params: [await toJSON(op), this.entryPoint],
       });
-      return res.data.result.toString();
+      // TODO paymasterAndAData is only for Pimlico, stackup is result directly
+      return (res.data.result as any).paymasterAndData.toString();
     } catch (e) {
       console.log("PM - error", (e as any).response?.data?.error);
       throw e;

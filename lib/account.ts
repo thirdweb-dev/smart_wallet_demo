@@ -61,9 +61,10 @@ export class AccountAPI extends BaseAccountAPI {
     }
     console.log("AccountAPI - Creating account via factory");
     // TODO here the createAccount expects owner + salt as arguments, but could be different
+    const localAddress = await this.params.localSigner.getAddress();
     const tx = factory.prepare("createAccount", [
-      await this.params.localSigner.getAddress(),
-      0, // salt
+      localAddress,
+      0, // ethers.utils.formatBytes32String(localAddress)
     ]);
     console.log("Cost to create account: ", await tx.estimateGasCost());
     return hexConcat([factory.getAddress(), tx.encode()]);
