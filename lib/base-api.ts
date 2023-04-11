@@ -17,7 +17,7 @@ import {
   PaymasterAPI,
   calcPreVerificationGas,
 } from "@account-abstraction/sdk";
-import { TransactionDetailsForUserOp } from "@account-abstraction/sdk/dist/src/TransactionDetailsForUserOp";
+import { TransactionDetailsForUserOp } from "./transaction-details";
 
 export interface BaseApiParams {
   provider: Provider;

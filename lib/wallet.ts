@@ -1,5 +1,3 @@
-import { ERC4337EthersProvider } from "@account-abstraction/sdk";
-
 import { ChainOrRpcUrl } from "@thirdweb-dev/sdk";
 import { AbstractWallet } from "@thirdweb-dev/wallets/evm/wallets/abstract";
 import { Signer } from "ethers";
@@ -9,6 +7,7 @@ import { ProviderConfig, create4337Provider } from "./provider-utils";
 
 import TWAccountFactory from "../artifacts/TWAccountFactory.json";
 import TWAccount from "../artifacts/TWAccount.json";
+import { ERC4337EthersProvider } from "./erc4337-provider";
 
 export type SmartWalletConfig = {
   apiKey: string;

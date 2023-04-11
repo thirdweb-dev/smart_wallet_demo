@@ -10,10 +10,10 @@ import {
 import { ChainOrRpcUrl, getChainProvider } from "@thirdweb-dev/sdk";
 import { AccountAPI } from "./account";
 import { ContractInterface, ethers } from "ethers";
-import { ERC4337EthersProvider } from "./erc4337-provider";
 
 import TWAccountFactory from "../artifacts/TWAccountFactory.json";
 import TWAccount from "../artifacts/TWAccount.json";
+import { ERC4337EthersProvider } from "./erc4337-provider";
 export interface ProviderConfig {
   /**
    * the chain to use

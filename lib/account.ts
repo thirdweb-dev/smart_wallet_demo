@@ -1,7 +1,4 @@
-import {
-  BaseApiParams,
-  BaseAccountAPI,
-} from "@account-abstraction/sdk/dist/src/BaseAccountAPI";
+import { BaseApiParams } from "@account-abstraction/sdk/dist/src/BaseAccountAPI";
 import { ChainOrRpcUrl, SmartContract, ThirdwebSDK } from "@thirdweb-dev/sdk";
 import {
   Signer,
@@ -13,6 +10,7 @@ import {
 import { arrayify, hexConcat } from "ethers/lib/utils";
 
 import IEntryPoint from "../artifacts/IEntryPoint.json";
+import { BaseAccountAPI } from "./base-api";
 
 export interface AccountApiParams extends Omit<BaseApiParams, "provider"> {
   chain: ChainOrRpcUrl;

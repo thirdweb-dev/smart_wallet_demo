@@ -13,10 +13,10 @@ import {
 } from "@account-abstraction/contracts";
 import { getUserOpHash } from "@account-abstraction/utils";
 import Debug from "debug";
-import { ERC4337EthersSigner } from "@account-abstraction/sdk/dist/src/ERC4337EthersSigner";
 import { ClientConfig, HttpRpcClient } from "@account-abstraction/sdk";
-import { BaseAccountAPI } from "@account-abstraction/sdk/dist/src/BaseAccountAPI";
 import { UserOperationEventListener } from "./userop-event";
+import { BaseAccountAPI } from "./base-api";
+import { ERC4337EthersSigner } from "./erc4337-signer";
 const debug = Debug("aa.provider");
 
 export class ERC4337EthersProvider extends BaseProvider {
