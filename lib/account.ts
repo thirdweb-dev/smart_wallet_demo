@@ -103,7 +103,7 @@ export class AccountAPI extends BaseAccountAPI {
 
   async getCounterFactualAddress(): Promise<string> {
     const factory = await this.getFactoryContract();
-    return factory.call("getAddress", this.getAccountId());
+    return factory.call("getAddress", [this.getAccountId()]);
   }
 
   async getNonce(): Promise<BigNumber> {
@@ -118,7 +118,7 @@ export class AccountAPI extends BaseAccountAPI {
       entryPointAddress,
       IEntryPoint.abi
     );
-    return await entrypointContract.call("getNonce", accountAddr, 0);
+    return await entrypointContract.call("getNonce", [accountAddr, 0]);
   }
 
   async encodeExecute(
