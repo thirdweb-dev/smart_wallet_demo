@@ -23,10 +23,11 @@ export type SmartWalletConfig = {
 export class SmartWallet extends AbstractWallet {
   static fromLocalWallet(
     config: SmartWalletConfig,
-    localSigner: Signer
+    localSigner: Signer,
+    accountId: string
   ): SmartWallet {
     const wallet = new SmartWallet(config);
-    wallet.connect(localSigner);
+    wallet.connect(localSigner, accountId);
     return wallet;
   }
 
@@ -39,7 +40,7 @@ export class SmartWallet extends AbstractWallet {
     this.config = config;
   }
 
-  connect(localSigner: Signer) {
+  connect(localSigner: Signer, accountId: string) {
     const config = this.config;
     const bundlerUrl = `https://node.stackup.sh/v1/rpc/${config.apiKey}`;
     const paymasterUrl = `https://app.stackup.sh/api/v2/paymaster/payg/${config.apiKey}`;
@@ -47,6 +48,7 @@ export class SmartWallet extends AbstractWallet {
     this.providerConfig = {
       chain: config.chain,
       localSigner,
+      accountId,
       entryPointAddress,
       bundlerUrl,
       paymasterAPI: config.gasless

@@ -3,7 +3,13 @@ import {
   BaseAccountAPI,
 } from "@account-abstraction/sdk/dist/src/BaseAccountAPI";
 import { ChainOrRpcUrl, SmartContract, ThirdwebSDK } from "@thirdweb-dev/sdk";
-import { Signer, BigNumberish, BigNumber, ContractInterface, ethers } from "ethers";
+import {
+  Signer,
+  BigNumberish,
+  BigNumber,
+  ContractInterface,
+  ethers,
+} from "ethers";
 import { arrayify, hexConcat } from "ethers/lib/utils";
 
 import IEntryPoint from "../artifacts/IEntryPoint.json";
@@ -11,6 +17,7 @@ import IEntryPoint from "../artifacts/IEntryPoint.json";
 export interface AccountApiParams extends Omit<BaseApiParams, "provider"> {
   chain: ChainOrRpcUrl;
   localSigner: Signer;
+  accountId: string;
   factoryAddress: string;
   factoryAbi?: ContractInterface;
   accountAbi?: ContractInterface;
@@ -20,6 +27,7 @@ export class AccountAPI extends BaseAccountAPI {
   sdk: ThirdwebSDK;
   params: AccountApiParams;
   accountContract?: SmartContract;
+  factoryContract?: SmartContract;
 
   constructor(params: AccountApiParams) {
     const sdk = ThirdwebSDK.fromSigner(params.localSigner, params.chain);
@@ -52,45 +60,64 @@ export class AccountAPI extends BaseAccountAPI {
   }
 
   async getAccountInitCode(): Promise<string> {
-    let factory;
+    const factory = await this.getFactoryContract();
+    console.log("AccountAPI - Creating account via factory");
+    // TODO: here the createAccount expects owner + salt as arguments, but could be different
+    const localSigner = await this.params.localSigner.getAddress();
+
+    const tx = factory.prepare("createAccount", [
+      localSigner,
+      this.getAccountId(),
+    ]);
+    try {
+      console.log("Cost to create account: ", await tx.estimateGasCost());
+    } catch (e) {
+      console.log("Cost to create account: unknown");
+    }
+
+    return hexConcat([factory.getAddress(), tx.encode()]);
+  }
+
+  getAccountId() {
+    const hash = ethers.utils.id(this.params.accountId);
+    const salt = "0x" + hash.substring(2, 66);
+    return salt;
+  }
+
+  async getFactoryContract() {
+    if (this.factoryContract) {
+      return this.factoryContract;
+    }
     if (this.params.factoryAbi) {
-      factory = await this.sdk.getContract(
+      this.factoryContract = await this.sdk.getContract(
         this.params.factoryAddress,
         this.params.factoryAbi
       );
     } else {
-      factory = await this.sdk.getContract(this.params.factoryAddress);
+      this.factoryContract = await this.sdk.getContract(
+        this.params.factoryAddress
+      );
     }
-    console.log("AccountAPI - Creating account via factory");
-    // TODO: here the createAccount expects owner + salt as arguments, but could be different
-    const localSigner = await this.params.localSigner.getAddress();
-    
-    // NOTE: for some reason, using `localSigner` for salt results in an error e.g. const salt = ethers.utils.formatBytes32String(localSigner as string);
-    const salt = ethers.utils.formatBytes32String("random-salt");
+    return this.factoryContract;
+  }
 
-    const tx = factory.prepare("createAccount", [
-      localSigner,
-      salt, // salt
-    ]);
-    try {
-      console.log("Cost to create account: ", await tx.estimateGasCost());
-    } catch(e) {
-      console.log("Cost to create account: unknown");
-    }
-    
-    return hexConcat([factory.getAddress(), tx.encode()]);
+  async getCounterFactualAddress(): Promise<string> {
+    const factory = await this.getFactoryContract();
+    return factory.call("getAddress", this.getAccountId());
   }
 
   async getNonce(): Promise<BigNumber> {
-
     if (await this.checkAccountPhantom()) {
       return BigNumber.from(0);
     }
     const accountContract = await this._getAccountContract();
-    const accountAddr = await this.getAccountAddress()
+    const accountAddr = await this.getAccountAddress();
 
     const entryPointAddress = await accountContract.call("entryPoint");
-    const entrypointContract = await this.sdk.getContract(entryPointAddress, IEntryPoint.abi);
+    const entrypointContract = await this.sdk.getContract(
+      entryPointAddress,
+      IEntryPoint.abi
+    );
     return await entrypointContract.call("getNonce", accountAddr, 0);
   }
 

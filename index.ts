@@ -14,7 +14,7 @@ const main = async () => {
 
     // AA Config
     const stackup_key = process.env.STACKUP_KEY as string;
-    
+
     // NOTE: This is the old entrypoint address. The latest one is 0x5FF137D4b0FDCD49DcA30c7CF57E578a026d2789.
     // But the paymaster does not support the latest version yet.
     // const entryPointAddress = "0x0576a174D229E3cFA37253523E645A78A0C91B57";
@@ -27,11 +27,15 @@ const main = async () => {
     const config: SmartWalletConfig = {
       apiKey: stackup_key,
       chain: "goerli",
-      gasless: false,
+      gasless: true,
       factoryAddress,
     };
 
-    const smartWallet = SmartWallet.fromLocalWallet(config, localWallet);
+    const smartWallet = SmartWallet.fromLocalWallet(
+      config,
+      localWallet,
+      "my_username"
+    );
 
     // now use the SDK normally
     const sdk = await ThirdwebSDK.fromWallet(smartWallet, "goerli");
@@ -51,10 +55,10 @@ const main = async () => {
     console.time("claim");
     console.time("prepare");
     const tx = await contract.erc20.claim.prepare(1);
-    
+
     // NOTE: we set a manual gas limit since the SDK fails to estimate gas for some reason. The `800_000` value is a guess.
-    tx.setGasLimit(800_000);
-    
+    tx.setGasLimit(1_000_000);
+
     console.timeEnd("prepare");
     console.time("send");
     const t = await tx.send();

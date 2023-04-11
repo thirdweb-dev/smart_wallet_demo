@@ -1,8 +1,6 @@
 import { JsonRpcProvider } from "@ethersproject/providers";
 
-import {
-  EntryPoint__factory,
-} from "@account-abstraction/contracts";
+import { EntryPoint__factory } from "@account-abstraction/contracts";
 import { Signer } from "@ethersproject/abstract-signer";
 import {
   DeterministicDeployer,
@@ -25,6 +23,10 @@ export interface ProviderConfig {
    * the signer that will sign transactions locally
    */
   localSigner: Signer;
+  /**
+   * The stable account id which is used to derive the account address
+   */
+  accountId: string;
   /**
    * the entry point to use
    */
@@ -76,6 +78,7 @@ export async function create4337Provider(
   const accountApi = new AccountAPI({
     chain: config.chain,
     localSigner: config.localSigner,
+    accountId: config.accountId,
     entryPointAddress: config.entryPointAddress,
     factoryAddress: config.factoryAddress,
     paymasterAPI: config.paymasterAPI,
