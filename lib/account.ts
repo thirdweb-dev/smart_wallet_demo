@@ -108,16 +108,32 @@ export class AccountAPI extends BaseAccountAPI {
     if (await this.checkAccountPhantom()) {
       return BigNumber.from(0);
     }
-    const accountContract = await this._getAccountContract();
-    const accountAddr = await this.getAccountAddress();
 
-    const entryPointAddress = await accountContract.call("entryPoint");
-    const entrypointContract = await this.sdk.getContract(
-      entryPointAddress,
-      IEntryPoint.abi
-    );
-    return await entrypointContract.call("getNonce", [accountAddr, 0]);
+    // NOTE: returning hardcoded expected value leads to script failure in `sendUserOpToBundler` in `sendTransaction`
+    // return BigNumber.from(1);
+
+    // NOTE: this code leads to failure in `resolveProperties` in `getPreVerificationGas`.
+    const accountContract = await this._getAccountContract();
+    const nonce = await accountContract.call("nonce");
+    console.log("AccountAPI - nonce: ", nonce);
+    return nonce;
   }
+
+  // NOTE: this is for the new Entrypoint contract, which manages nonces for accounts.
+  // async getNonce(): Promise<BigNumber> {
+  //   if (await this.checkAccountPhantom()) {
+  //     return BigNumber.from(0);
+  //   }
+  //   const accountContract = await this._getAccountContract();
+  //   const accountAddr = await this.getAccountAddress();
+
+  //   const entryPointAddress = await accountContract.call("entryPoint");
+  //   const entrypointContract = await this.sdk.getContract(
+  //     entryPointAddress,
+  //     IEntryPoint.abi
+  //   );
+  //   return await entrypointContract.call("getNonce", [accountAddr, 0]);
+  // }
 
   async encodeExecute(
     target: string,
