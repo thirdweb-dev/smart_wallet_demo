@@ -20,8 +20,8 @@ const main = async () => {
     // const entryPointAddress = "0x0576a174D229E3cFA37253523E645A78A0C91B57";
 
     // TODO: deploy or fetch a factory programatically for the given chain.
-    // This factory is a `TWAccountFactory` deployed on Goerli.
-    const factoryAddress = "0x717ae3154b0AA1b783544E161F4A95B92B11d830";
+    // This factory is a `TWDynamicAccountFactory` deployed on Goerli.
+    const factoryAddress = "0x403a9060F8eFE3668b6DBB7746C2476Fe74037cf";
 
     // Create the AA provider
     const config: SmartWalletConfig = {

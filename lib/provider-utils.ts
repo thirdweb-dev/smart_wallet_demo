@@ -11,8 +11,8 @@ import { ChainOrRpcUrl, getChainProvider } from "@thirdweb-dev/sdk";
 import { AccountAPI } from "./account";
 import { ContractInterface, ethers } from "ethers";
 
-import TWAccountFactory from "../artifacts/TWAccountFactory.json";
-import TWAccount from "../artifacts/TWAccount.json";
+import TWDynamicAccountFactory from "../artifacts/TWDynamicAccountFactory.json";
+import TWDynamicAccount from "../artifacts/TWDynamicAccount.json";
 import { ERC4337EthersProvider } from "./erc4337-provider";
 export interface ProviderConfig {
   /**
@@ -82,8 +82,8 @@ export async function create4337Provider(
     entryPointAddress: config.entryPointAddress,
     factoryAddress: config.factoryAddress,
     paymasterAPI: config.paymasterAPI,
-    accountAbi: TWAccount.abi,
-    factoryAbi: TWAccountFactory.abi,
+    accountAbi: TWDynamicAccount.abi,
+    factoryAbi: TWDynamicAccountFactory.abi,
   });
 
   const chainId = await accountApi.getChainId();
@@ -112,7 +112,7 @@ export async function deployAccountFactory(
   const entryPoint = EntryPoint__factory.connect(entryPointAddress, provider);
   const detDeployer = new DeterministicDeployer(provider);
   return await detDeployer.deterministicDeploy(
-    new ethers.ContractFactory(TWAccountFactory.abi, TWAccountFactory.bytecode),
+    new ethers.ContractFactory(TWDynamicAccountFactory.abi, TWDynamicAccountFactory.bytecode),
     0,
     [entryPoint.address]
   );

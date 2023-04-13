@@ -5,8 +5,8 @@ import { ENTRYPOINT_ADDRESS } from "./constants";
 import { getVerifyingPaymaster } from "./paymaster";
 import { ProviderConfig, create4337Provider } from "./provider-utils";
 
-import TWAccountFactory from "../artifacts/TWAccountFactory.json";
-import TWAccount from "../artifacts/TWAccount.json";
+import TWDynamicAccountFactory from "../artifacts/TWDynamicAccountFactory.json";
+import TWDynamicAccount from "../artifacts/TWDynamicAccount.json";
 import { ERC4337EthersProvider } from "./erc4337-provider";
 
 export type SmartWalletConfig = {
@@ -54,8 +54,8 @@ export class SmartWallet extends AbstractWallet {
         ? getVerifyingPaymaster(paymasterUrl, entryPointAddress)
         : undefined,
       factoryAddress: config.factoryAddress,
-      factoryAbi: config.factoryAbi || TWAccountFactory.abi,
-      accountAbi: config.accountAbi || TWAccount.abi,
+      factoryAbi: config.factoryAbi || TWDynamicAccountFactory.abi,
+      accountAbi: config.accountAbi || TWDynamicAccount.abi,
     };
   }
 
