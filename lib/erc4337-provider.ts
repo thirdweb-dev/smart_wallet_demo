@@ -12,12 +12,10 @@ import {
   UserOperationStruct,
 } from "@account-abstraction/contracts";
 import { getUserOpHash } from "@account-abstraction/utils";
-import Debug from "debug";
 import { ClientConfig, HttpRpcClient } from "@account-abstraction/sdk";
 import { UserOperationEventListener } from "./userop-event";
 import { BaseAccountAPI } from "./base-api";
 import { ERC4337EthersSigner } from "./erc4337-signer";
-const debug = Debug("aa.provider");
 
 export class ERC4337EthersProvider extends BaseProvider {
   initializedBlockNumber!: number;
@@ -63,11 +61,21 @@ export class ERC4337EthersProvider extends BaseProvider {
   }
 
   async perform(method: string, params: any): Promise<any> {
-    debug("perform", method, params);
     if (method === "sendTransaction" || method === "getTransactionReceipt") {
       // TODO: do we need 'perform' method to be available at all?
       // there is nobody out there to use it for ERC-4337 methods yet, we have nothing to override in fact.
       throw new Error("Should not get here. Investigate.");
+    }
+    if (method === "estimateGas") {
+      // hijack this to estimate gas from the entrypoint instead
+      const { callGasLimit } =
+        await this.smartAccountAPI.encodeUserOpCallDataAndGasLimit({
+          target: params.transaction.to,
+          data: params.transaction.data,
+          value: params.transaction.value,
+          gasLimit: params.transaction.gasLimit,
+        });
+      return callGasLimit;
     }
     return await this.originalProvider.perform(method, params);
   }

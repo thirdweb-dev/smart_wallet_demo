@@ -957,11 +957,6 @@
   resolved "https://registry.yarnpkg.com/@thirdweb-dev/chains/-/chains-0.1.11.tgz#2e7cd307f7ddb9bfd6155e6289f0d5b8bbcd77f9"
   integrity sha512-cfZ6l0Mf/QBJZBWgAjPEGbCJOkqBuv1RdjK/JrKDJE01qdPSVOZ2IVmKqdqDXDDGIrJ103XgPZ0x+v1PCZkr9g==
 
-"@thirdweb-dev/chains@0.1.12-nightly-abe88599-20230412224457":
-  version "0.1.12-nightly-abe88599-20230412224457"
-  resolved "https://registry.yarnpkg.com/@thirdweb-dev/chains/-/chains-0.1.12-nightly-abe88599-20230412224457.tgz#c3f977c21c53546a5a82160408d9dc1ae24b0ee2"
-  integrity sha512-v3GjTsBrsw6t2bIZrfeBUjwb93/zx9S6RfcBXhB+sPCWENB4W/XxxYQflTxwoRsu+88UD20DtBRFhqXvC7ICug==
-
 "@thirdweb-dev/contracts-js@1.3.3":
   version "1.3.3"
   resolved "https://registry.yarnpkg.com/@thirdweb-dev/contracts-js/-/contracts-js-1.3.3.tgz#f44df210efec111dd4ebf3e3bf6f64142f0009fd"
@@ -980,11 +975,11 @@
   integrity sha512-vO9/3lSLO8smyyH1QVeYravSTzFwV1nf1C/Im1NBDPdH8//YvcbhtETGGiNfHWpyCvSi0vRYwvf+/7FKdwpDGQ==
 
 "@thirdweb-dev/sdk@^3.10.11-nightly-abe88599-20230412224457":
-  version "3.10.11-nightly-abe88599-20230412224457"
-  resolved "https://registry.yarnpkg.com/@thirdweb-dev/sdk/-/sdk-3.10.11-nightly-abe88599-20230412224457.tgz#85edc87bf21f434e6242556a8cbc0dd720afebd7"
-  integrity sha512-KA6ZXm4aKwVWGptz8jhitrAR/+BPm4l+TwYnSXevWmoU44xXQ3WI8Ml0zxiN4eTSRN64Whzaci8HaYw/v3vlUQ==
+  version "3.10.11-nightly-bfdd8493-20230411231810"
+  resolved "https://registry.yarnpkg.com/@thirdweb-dev/sdk/-/sdk-3.10.11-nightly-bfdd8493-20230411231810.tgz#040256a04ff714571ddac94ef0ac934bdf9b59db"
+  integrity sha512-9PZGUl90IrWjBjkF+5ukKqaBZYruCGZdbjtqeTOJ/ym3GgFRZzia3MX+bMOfjci07lwYy9OMgsIbDOgx18p2XA==
   dependencies:
-    "@thirdweb-dev/chains" "0.1.12-nightly-abe88599-20230412224457"
+    "@thirdweb-dev/chains" "0.1.11"
     "@thirdweb-dev/contracts-js" "1.3.3"
     "@thirdweb-dev/generated-abis" "0.0.1"
     "@thirdweb-dev/storage" "1.1.2"
