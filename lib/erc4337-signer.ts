@@ -36,6 +36,7 @@ export class ERC4337EthersSigner extends Signer {
     console.log("sendTransaction", { tx });
     const userOperation = await this.smartAccountAPI.createSignedUserOp({
       target: tx.to ?? "",
+      //nonce: tx.nonce,
       data: tx.data?.toString() ?? "",
       value: tx.value,
       gasLimit: tx.gasLimit,

@@ -279,6 +279,8 @@ export abstract class BaseAccountAPI {
       }
     }
 
+    console.log({ info });
+
     const partialUserOp: any = {
       sender: this.getAccountAddress(),
       nonce: info.nonce ?? this.getNonce(),

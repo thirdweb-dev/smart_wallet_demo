@@ -104,36 +104,51 @@ export class AccountAPI extends BaseAccountAPI {
     return factory.call("getAddress", [this.getAccountId()]);
   }
 
-  async getNonce(): Promise<BigNumber> {
-    if (await this.checkAccountPhantom()) {
-      return BigNumber.from(0);
-    }
-
-    // NOTE: returning hardcoded expected value leads to script failure in `sendUserOpToBundler` in `sendTransaction`
-    // return BigNumber.from(1);
-
-    // NOTE: this code leads to failure in `resolveProperties` in `getPreVerificationGas`.
-    const accountContract = await this._getAccountContract();
-    const nonce = await accountContract.call("nonce");
-    console.log("AccountAPI - nonce: ", nonce);
-    return nonce;
-  }
-
-  // NOTE: this is for the new Entrypoint contract, which manages nonces for accounts.
   // async getNonce(): Promise<BigNumber> {
   //   if (await this.checkAccountPhantom()) {
   //     return BigNumber.from(0);
   //   }
-  //   const accountContract = await this._getAccountContract();
-  //   const accountAddr = await this.getAccountAddress();
 
-  //   const entryPointAddress = await accountContract.call("entryPoint");
-  //   const entrypointContract = await this.sdk.getContract(
-  //     entryPointAddress,
-  //     IEntryPoint.abi
+  //   // NOTE: returning hardcoded expected value leads to script failure in `sendUserOpToBundler` in `sendTransaction`
+  //   // return BigNumber.from(1);
+
+  //   // NOTE: this code leads to failure in `resolveProperties` in `getPreVerificationGas`.
+  //   const accountContract = await this._getAccountContract();
+  //   console.log(
+  //     "calling getNonce on accountContract: ",
+  //     accountContract.getAddress()
   //   );
-  //   return await entrypointContract.call("getNonce", [accountAddr, 0]);
+  //   try {
+  //     const nonce = await accountContract.call("getNonce");
+  //     console.log("AccountAPI - nonce: ", nonce);
+  //     return nonce;
+  //   } catch (e) {
+  //     console.log("AccountAPI - error getting nonce: ", e);
+  //     throw e;
+  //   }
   // }
+
+  // NOTE: this is for the new Entrypoint contract, which manages nonces for accounts.
+  async getNonce(): Promise<BigNumber> {
+    if (await this.checkAccountPhantom()) {
+      return BigNumber.from(0);
+    }
+    const accountContract = await this._getAccountContract();
+    const accountAddr = await this.getAccountAddress();
+
+    const entryPointAddress = await accountContract.call("entryPoint");
+    const entrypointContract = await this.sdk.getContract(
+      entryPointAddress,
+      IEntryPoint.abi
+    );
+    console.log("calling getNonce on entrypointContract: ", entryPointAddress);
+    try {
+      return await entrypointContract.call("getNonce", [accountAddr, 0]);
+    } catch (e) {
+      console.log("AccountAPI - error getting nonce: ", e);
+      throw e;
+    }
+  }
 
   async encodeExecute(
     target: string,
