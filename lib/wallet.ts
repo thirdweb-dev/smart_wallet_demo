@@ -43,15 +43,16 @@ export class SmartWallet extends AbstractWallet {
     const config = this.config;
     const bundlerUrl = `https://node.stackup.sh/v1/rpc/${config.apiKey}`;
     const paymasterUrl = `https://app.stackup.sh/api/v2/paymaster/payg/${config.apiKey}`;
+    const pimlicoUrl = `https://api.pimlico.io/v1/goerli/rpc?apikey=${config.apiKey}`;
     const entryPointAddress = config.entryPointAddress || ENTRYPOINT_ADDRESS;
     this.providerConfig = {
       chain: config.chain,
       localSigner,
       accountId,
       entryPointAddress,
-      bundlerUrl,
+      bundlerUrl: pimlicoUrl,
       paymasterAPI: config.gasless
-        ? getVerifyingPaymaster(paymasterUrl, entryPointAddress)
+        ? getVerifyingPaymaster(pimlicoUrl, entryPointAddress)
         : undefined,
       factoryAddress: config.factoryAddress,
       factoryAbi: config.factoryAbi || TWAccountFactory.abi,
