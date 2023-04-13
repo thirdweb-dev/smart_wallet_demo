@@ -10,7 +10,7 @@ const main = async () => {
   try {
     // Local signer
     let localWallet = await createOrRecoverWallet();
-    console.log("Local wallet address: ", localWallet.address);
+    console.log("Local signer addr:", await localWallet.getAddress());
 
     // AA Config
     const stackup_key = process.env.STACKUP_KEY as string;
@@ -31,18 +31,29 @@ const main = async () => {
       factoryAddress,
     };
 
+    const goerliReadOnlySDK = new ThirdwebSDK("goerli");
+    const factoryContract = await goerliReadOnlySDK.getContract(factoryAddress);
+    const accounts = await factoryContract.events.getEvents("AccountCreated", {
+      filters: {
+        accountAdmin: localWallet.address,
+      },
+    });
+    console.log(
+      `Found ${accounts.length} accounts for local signer`,
+      accounts.map((a) => a.data.account)
+    );
+
     const smartWallet = SmartWallet.fromLocalWallet(
       config,
       localWallet,
-      "my_username5"
+      "my_username7"
     );
 
     // now use the SDK normally
     const sdk = await ThirdwebSDK.fromWallet(smartWallet, "goerli");
 
-    console.log("signer addr", await localWallet.getAddress());
-    console.log("smart wallet addr", await sdk.wallet.getAddress());
-    console.log("balance", (await sdk.wallet.balance()).displayValue);
+    console.log("Smart Account addr:", await sdk.wallet.getAddress());
+    console.log("balance:", (await sdk.wallet.balance()).displayValue);
 
     console.time("contract");
     const contract = await sdk.getContract(
@@ -51,7 +62,7 @@ const main = async () => {
     console.timeEnd("contract");
 
     const tokenBalance = await contract.erc20.balance();
-    console.log("token balance", tokenBalance.displayValue);
+    console.log("token balance:", tokenBalance.displayValue);
     console.time("claim");
     console.time("prepare");
     const tx = await contract.erc20.claim.prepare(1);

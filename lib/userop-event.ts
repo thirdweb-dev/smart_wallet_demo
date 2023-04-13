@@ -66,7 +66,6 @@ export class UserOperationEventListener {
     }
 
     const transactionReceipt = await event.getTransactionReceipt();
-    transactionReceipt.transactionHash = this.userOpHash;
     debug(
       "got event with status=",
       event.args.success,
