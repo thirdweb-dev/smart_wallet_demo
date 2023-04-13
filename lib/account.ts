@@ -8,8 +8,6 @@ import {
   ethers,
 } from "ethers";
 import { arrayify, hexConcat } from "ethers/lib/utils";
-
-import IEntryPoint from "../artifacts/IEntryPoint.json";
 import { BaseAccountAPI } from "./base-api";
 
 export interface AccountApiParams extends Omit<BaseApiParams, "provider"> {
@@ -118,22 +116,6 @@ export class AccountAPI extends BaseAccountAPI {
     console.log("AccountAPI - nonce: ", nonce);
     return nonce;
   }
-
-  // NOTE: this is for the new Entrypoint contract, which manages nonces for accounts.
-  // async getNonce(): Promise<BigNumber> {
-  //   if (await this.checkAccountPhantom()) {
-  //     return BigNumber.from(0);
-  //   }
-  //   const accountContract = await this._getAccountContract();
-  //   const accountAddr = await this.getAccountAddress();
-
-  //   const entryPointAddress = await accountContract.call("entryPoint");
-  //   const entrypointContract = await this.sdk.getContract(
-  //     entryPointAddress,
-  //     IEntryPoint.abi
-  //   );
-  //   return await entrypointContract.call("getNonce", [accountAddr, 0]);
-  // }
 
   async encodeExecute(
     target: string,

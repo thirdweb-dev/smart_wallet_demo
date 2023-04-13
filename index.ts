@@ -34,7 +34,7 @@ const main = async () => {
     const smartWallet = SmartWallet.fromLocalWallet(
       config,
       localWallet,
-      "my_username2"
+      "my_username5"
     );
 
     // now use the SDK normally
@@ -56,7 +56,7 @@ const main = async () => {
     console.time("prepare");
     const tx = await contract.erc20.claim.prepare(1);
 
-    // NOTE: we set a manual gas limit since the SDK fails to estimate gas for some reason. The `800_000` value is a guess.
+    // NOTE: we set a manual gas limit since the SDK fails to estimate gas for some reason. The `1_000_000` value is a guess.
     tx.setGasLimit(1_000_000);
 
     console.timeEnd("prepare");

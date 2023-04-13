@@ -33,14 +33,14 @@ export class ERC4337EthersSigner extends Signer {
   ): Promise<TransactionResponse> {
     const tx: TransactionRequest = await this.populateTransaction(transaction);
     await this.verifyAllNecessaryFields(tx);
-    console.log("sendTransaction", { tx });
+    
     const userOperation = await this.smartAccountAPI.createSignedUserOp({
       target: tx.to ?? "",
       data: tx.data?.toString() ?? "",
       value: tx.value,
       gasLimit: tx.gasLimit,
     });
-    console.log("signedUserOp", { userOperation });
+    
     const transactionResponse =
       await this.erc4337provider.constructUserOpTransactionResponse(
         userOperation
