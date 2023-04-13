@@ -1,14 +1,19 @@
-import {
-  BaseApiParams,
-  BaseAccountAPI,
-} from "@account-abstraction/sdk/dist/src/BaseAccountAPI";
+import { BaseApiParams } from "@account-abstraction/sdk/dist/src/BaseAccountAPI";
 import { ChainOrRpcUrl, SmartContract, ThirdwebSDK } from "@thirdweb-dev/sdk";
-import { Signer, BigNumberish, BigNumber, ContractInterface } from "ethers";
+import {
+  Signer,
+  BigNumberish,
+  BigNumber,
+  ContractInterface,
+  ethers,
+} from "ethers";
 import { arrayify, hexConcat } from "ethers/lib/utils";
+import { BaseAccountAPI } from "./base-api";
 
 export interface AccountApiParams extends Omit<BaseApiParams, "provider"> {
   chain: ChainOrRpcUrl;
   localSigner: Signer;
+  accountId: string;
   factoryAddress: string;
   factoryAbi?: ContractInterface;
   accountAbi?: ContractInterface;
@@ -18,6 +23,7 @@ export class AccountAPI extends BaseAccountAPI {
   sdk: ThirdwebSDK;
   params: AccountApiParams;
   accountContract?: SmartContract;
+  factoryContract?: SmartContract;
 
   constructor(params: AccountApiParams) {
     const sdk = ThirdwebSDK.fromSigner(params.localSigner, params.chain);
@@ -50,31 +56,65 @@ export class AccountAPI extends BaseAccountAPI {
   }
 
   async getAccountInitCode(): Promise<string> {
-    let factory;
+    const factory = await this.getFactoryContract();
+    console.log("AccountAPI - Creating account via factory");
+    // TODO: here the createAccount expects owner + salt as arguments, but could be different
+    const localSigner = await this.params.localSigner.getAddress();
+
+    const tx = factory.prepare("createAccount", [
+      localSigner,
+      this.getAccountId(),
+    ]);
+    try {
+      console.log("Cost to create account: ", await tx.estimateGasCost());
+    } catch (e) {
+      console.log("Cost to create account: unknown");
+    }
+
+    return hexConcat([factory.getAddress(), tx.encode()]);
+  }
+
+  getAccountId() {
+    const hash = ethers.utils.id(this.params.accountId);
+    const salt = "0x" + hash.substring(2, 66);
+    return salt;
+  }
+
+  async getFactoryContract() {
+    if (this.factoryContract) {
+      return this.factoryContract;
+    }
     if (this.params.factoryAbi) {
-      factory = await this.sdk.getContract(
+      this.factoryContract = await this.sdk.getContract(
         this.params.factoryAddress,
         this.params.factoryAbi
       );
     } else {
-      factory = await this.sdk.getContract(this.params.factoryAddress);
+      this.factoryContract = await this.sdk.getContract(
+        this.params.factoryAddress
+      );
     }
-    console.log("AccountAPI - Creating account via factory");
-    // TODO here the createAccount expects owner + salt as arguments, but could be different
-    const tx = factory.prepare("createAccount", [
-      await this.params.localSigner.getAddress(),
-      0, // salt
-    ]);
-    console.log("Cost to create account: ", await tx.estimateGasCost());
-    return hexConcat([factory.getAddress(), tx.encode()]);
+    return this.factoryContract;
+  }
+
+  async getCounterFactualAddress(): Promise<string> {
+    const factory = await this.getFactoryContract();
+    return factory.call("getAddress", [this.getAccountId()]);
   }
 
   async getNonce(): Promise<BigNumber> {
     if (await this.checkAccountPhantom()) {
       return BigNumber.from(0);
     }
+
+    // NOTE: returning hardcoded expected value leads to script failure in `sendUserOpToBundler` in `sendTransaction`
+    // return BigNumber.from(1);
+
+    // NOTE: this code leads to failure in `resolveProperties` in `getPreVerificationGas`.
     const accountContract = await this._getAccountContract();
-    return await accountContract.call("nonce");
+    const nonce = await accountContract.call("nonce");
+    console.log("AccountAPI - nonce: ", nonce);
+    return nonce;
   }
 
   async encodeExecute(

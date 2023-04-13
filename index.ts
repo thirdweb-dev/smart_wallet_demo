@@ -1,6 +1,6 @@
 import { config } from "dotenv";
 import { ThirdwebSDK } from "@thirdweb-dev/sdk";
-import { deploySimpleAccountFactory } from "./lib/provider-utils";
+import { deployAccountFactory } from "./lib/provider-utils";
 import { createOrRecoverWallet } from "./lib/utils";
 import { SmartWallet, SmartWalletConfig } from "./lib/wallet";
 
@@ -10,17 +10,18 @@ const main = async () => {
   try {
     // Local signer
     let localWallet = await createOrRecoverWallet();
+    console.log("Local wallet address: ", localWallet.address);
 
     // AA Config
     const stackup_key = process.env.STACKUP_KEY as string;
-    const entryPointAddress = "0x0576a174D229E3cFA37253523E645A78A0C91B57";
 
-    // deploy the account factory if not there already
-    // TODO where does this fit in the flow?
-    const factoryAddress = await deploySimpleAccountFactory(
-      "goerli",
-      entryPointAddress
-    );
+    // NOTE: This is the old entrypoint address. The latest one is 0x5FF137D4b0FDCD49DcA30c7CF57E578a026d2789.
+    // But the paymaster does not support the latest version yet.
+    // const entryPointAddress = "0x0576a174D229E3cFA37253523E645A78A0C91B57";
+
+    // TODO: deploy or fetch a factory programatically for the given chain.
+    // This factory is a `TWAccountFactory` deployed on Goerli.
+    const factoryAddress = "0x717ae3154b0AA1b783544E161F4A95B92B11d830";
 
     // Create the AA provider
     const config: SmartWalletConfig = {
@@ -29,7 +30,12 @@ const main = async () => {
       gasless: true,
       factoryAddress,
     };
-    const smartWallet = SmartWallet.fromLocalWallet(config, localWallet);
+
+    const smartWallet = SmartWallet.fromLocalWallet(
+      config,
+      localWallet,
+      "my_username5"
+    );
 
     // now use the SDK normally
     const sdk = await ThirdwebSDK.fromWallet(smartWallet, "goerli");
@@ -49,6 +55,10 @@ const main = async () => {
     console.time("claim");
     console.time("prepare");
     const tx = await contract.erc20.claim.prepare(1);
+
+    // NOTE: we set a manual gas limit since the SDK fails to estimate gas for some reason. The `1_000_000` value is a guess.
+    tx.setGasLimit(1_000_000);
+
     console.timeEnd("prepare");
     console.time("send");
     const t = await tx.send();

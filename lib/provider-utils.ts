@@ -1,9 +1,6 @@
 import { JsonRpcProvider } from "@ethersproject/providers";
 
-import {
-  EntryPoint__factory,
-  SimpleAccountFactory__factory,
-} from "@account-abstraction/contracts";
+import { EntryPoint__factory } from "@account-abstraction/contracts";
 import { Signer } from "@ethersproject/abstract-signer";
 import {
   DeterministicDeployer,
@@ -12,9 +9,11 @@ import {
 } from "@account-abstraction/sdk";
 import { ChainOrRpcUrl, getChainProvider } from "@thirdweb-dev/sdk";
 import { AccountAPI } from "./account";
-import { ContractInterface } from "ethers";
-import { ERC4337EthersProvider } from "./erc4337-provider";
+import { ContractInterface, ethers } from "ethers";
 
+import TWAccountFactory from "../artifacts/TWAccountFactory.json";
+import TWAccount from "../artifacts/TWAccount.json";
+import { ERC4337EthersProvider } from "./erc4337-provider";
 export interface ProviderConfig {
   /**
    * the chain to use
@@ -24,6 +23,10 @@ export interface ProviderConfig {
    * the signer that will sign transactions locally
    */
   localSigner: Signer;
+  /**
+   * The stable account id which is used to derive the account address
+   */
+  accountId: string;
   /**
    * the entry point to use
    */
@@ -75,11 +78,12 @@ export async function create4337Provider(
   const accountApi = new AccountAPI({
     chain: config.chain,
     localSigner: config.localSigner,
+    accountId: config.accountId,
     entryPointAddress: config.entryPointAddress,
     factoryAddress: config.factoryAddress,
     paymasterAPI: config.paymasterAPI,
-    accountAbi: config.accountAbi,
-    factoryAbi: SimpleAccountFactory__factory.abi,
+    accountAbi: TWAccount.abi,
+    factoryAbi: TWAccountFactory.abi,
   });
 
   const chainId = await accountApi.getChainId();
@@ -99,7 +103,8 @@ export async function create4337Provider(
   ).init();
 }
 
-export async function deploySimpleAccountFactory(
+// NOTE: this function errors out.
+export async function deployAccountFactory(
   chain: ChainOrRpcUrl,
   entryPointAddress: string
 ) {
@@ -107,7 +112,7 @@ export async function deploySimpleAccountFactory(
   const entryPoint = EntryPoint__factory.connect(entryPointAddress, provider);
   const detDeployer = new DeterministicDeployer(provider);
   return await detDeployer.deterministicDeploy(
-    new SimpleAccountFactory__factory(),
+    new ethers.ContractFactory(TWAccountFactory.abi, TWAccountFactory.bytecode),
     0,
     [entryPoint.address]
   );
