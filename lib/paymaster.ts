@@ -56,11 +56,20 @@ class VerifyingPaymasterAPI extends PaymasterAPI {
         jsonrpc: "2.0",
         id: 1,
         method: "pm_sponsorUserOperation",
-        params: [await toJSON(op), this.entryPoint],
+        params: [await toJSON(op), { entryPoint: this.entryPoint }],
       });
-      return res.data.result.toString();
+      if (res.data.result) {
+        const result =
+          (res.data.result as any).paymasterAndData || res.data.result;
+        return result.toString();
+      } else {
+        console.log("PM - error", JSON.stringify(res.data || res));
+        throw new Error(
+          `Paymaster returned no result from: ${this.paymasterUrl}`
+        );
+      }
     } catch (e) {
-      console.log("PM - error", (e as any).response?.data?.error);
+      console.log("PM - error", (e as any).data || e);
       throw e;
     }
   }

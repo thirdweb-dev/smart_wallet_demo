@@ -41,17 +41,18 @@ export class SmartWallet extends AbstractWallet {
 
   connect(localSigner: Signer, accountId: string) {
     const config = this.config;
-    const bundlerUrl = `https://node.stackup.sh/v1/rpc/${config.apiKey}`;
-    const paymasterUrl = `https://app.stackup.sh/api/v2/paymaster/payg/${config.apiKey}`;
+    // const bundlerUrl = `https://node.stackup.sh/v1/rpc/${config.apiKey}`;
+    // const paymasterUrl = `https://app.stackup.sh/api/v2/paymaster/payg/${config.apiKey}`;
+    const thirdwebUrl = "http://0.0.0.0:8787?chain=goerli";
     const entryPointAddress = config.entryPointAddress || ENTRYPOINT_ADDRESS;
     this.providerConfig = {
       chain: config.chain,
       localSigner,
       accountId,
       entryPointAddress,
-      bundlerUrl,
+      bundlerUrl: thirdwebUrl,
       paymasterAPI: config.gasless
-        ? getVerifyingPaymaster(paymasterUrl, entryPointAddress)
+        ? getVerifyingPaymaster(thirdwebUrl, entryPointAddress)
         : undefined,
       factoryAddress: config.factoryAddress,
       factoryAbi: config.factoryAbi || TWAccountFactory.abi,
