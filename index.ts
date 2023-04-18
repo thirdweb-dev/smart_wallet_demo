@@ -14,6 +14,7 @@ const main = async () => {
 
     // AA Config
     const stackup_key = process.env.STACKUP_KEY as string;
+    const pimlico_key = process.env.PIMLICO_KEY as string;
 
     // NOTE: This is the old entrypoint address. The latest one is 0x5FF137D4b0FDCD49DcA30c7CF57E578a026d2789.
     // But the paymaster does not support the latest version yet.
@@ -25,7 +26,6 @@ const main = async () => {
 
     // Create the AA provider
     const config: SmartWalletConfig = {
-      apiKey: stackup_key,
       chain: "goerli",
       gasless: true,
       factoryAddress,
@@ -46,7 +46,7 @@ const main = async () => {
     const smartWallet = SmartWallet.fromLocalWallet(
       config,
       localWallet,
-      "my_username6"
+      await localWallet.getAddress()
     );
 
     // now use the SDK normally

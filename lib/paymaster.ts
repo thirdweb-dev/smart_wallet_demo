@@ -52,11 +52,12 @@ class VerifyingPaymasterAPI extends PaymasterAPI {
 
     // Ask the paymaster to sign the transaction and return a valid paymasterAndData value.
     try {
+      const params = [await toJSON(op), { entryPoint: this.entryPoint }];
       const res = await axios.post<paymasterResponse>(this.paymasterUrl, {
         jsonrpc: "2.0",
         id: 1,
         method: "pm_sponsorUserOperation",
-        params: [await toJSON(op), { entryPoint: this.entryPoint }],
+        params,
       });
       if (res.data.result) {
         const result =
