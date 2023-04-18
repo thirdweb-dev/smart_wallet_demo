@@ -10,7 +10,6 @@ import TWAccount from "../artifacts/TWAccount.json";
 import { ERC4337EthersProvider } from "./erc4337-provider";
 
 export type SmartWalletConfig = {
-  apiKey: string;
   gasless: boolean;
   chain: ChainOrRpcUrl;
   factoryAddress: string;
@@ -41,17 +40,19 @@ export class SmartWallet extends AbstractWallet {
 
   connect(localSigner: Signer, accountId: string) {
     const config = this.config;
-    const bundlerUrl = `https://node.stackup.sh/v1/rpc/${config.apiKey}`;
-    const paymasterUrl = `https://app.stackup.sh/api/v2/paymaster/payg/${config.apiKey}`;
+    // const bundlerUrl = `https://node.stackup.sh/v1/rpc/${config.apiKey}`;
+    // const paymasterUrl = `https://app.stackup.sh/api/v2/paymaster/payg/${config.apiKey}`;
+    // const pimlico = `https://api.pimlico.io/v1/${this.config.chain}/rpc?apikey=${config.apiKey}`;
+    const thirdwebUrl = `https://${this.config.chain}.bundler.thirdweb.com`;
     const entryPointAddress = config.entryPointAddress || ENTRYPOINT_ADDRESS;
     this.providerConfig = {
       chain: config.chain,
       localSigner,
       accountId,
       entryPointAddress,
-      bundlerUrl,
+      bundlerUrl: thirdwebUrl,
       paymasterAPI: config.gasless
-        ? getVerifyingPaymaster(paymasterUrl, entryPointAddress)
+        ? getVerifyingPaymaster(thirdwebUrl, entryPointAddress)
         : undefined,
       factoryAddress: config.factoryAddress,
       factoryAbi: config.factoryAbi || TWAccountFactory.abi,
