@@ -22,7 +22,7 @@ const main = async () => {
 
     // TODO: deploy or fetch a factory programatically for the given chain.
     // This factory is a `TWAccountFactory` deployed on Goerli.
-    const factoryAddress = "0x717ae3154b0AA1b783544E161F4A95B92B11d830";
+    const factoryAddress = "0x8bB9B8305543cdF927e22648DC6392b5FF11a38A";
 
     // Create the AA provider
     const config: SmartWalletConfig = {
