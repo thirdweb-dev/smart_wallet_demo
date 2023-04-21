@@ -25,9 +25,9 @@ yarn dev # yarn
 The things to change to switch the type of smart wallets deployed are in `index.ts`:
 
 ```ts
-factoryAddress: "0x...", // pass your own predeployed factory address
-factoryAbi: SimpleAccountFactory__factory.abi, // pass your own factory abi
-accountAbi: SimpleAccount__factory.abi, // pass your own smart wallet abi
+const chain = Goerli; // your chain
+const factoryAddress = "0x..."; // your own factory address
+const accountId = "..."; // a username, email, etc
 ```
 
 ## Contract Requirements:
