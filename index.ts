@@ -1,56 +1,63 @@
 import { config } from "dotenv";
 import { ThirdwebSDK } from "@thirdweb-dev/sdk";
-import { deployAccountFactory } from "./lib/provider-utils";
-import { createOrRecoverWallet } from "./lib/utils";
-import { SmartWallet, SmartWalletConfig } from "./lib/wallet";
+import {
+  getAssociatedAccounts,
+  SmartWallet,
+  SmartWalletConfig,
+} from "@thirdweb-dev/wallets";
+import { DeviceWalletNode } from "@thirdweb-dev/wallets/evm/wallets/device-walllet-node";
+import { Goerli } from "@thirdweb-dev/chains";
 
 config();
 
 const main = async () => {
   try {
     // Local signer
-    let localWallet = await createOrRecoverWallet();
+    const chain = Goerli;
+    let localWallet = new DeviceWalletNode({
+      chain,
+    });
+    await localWallet.loadOrCreate({
+      strategy: "mnemonic",
+      encryption: false,
+    });
     console.log("Local signer addr:", await localWallet.getAddress());
 
     // AA Config
     const stackup_key = process.env.STACKUP_KEY as string;
     const pimlico_key = process.env.PIMLICO_KEY as string;
-
-    // NOTE: This is the old entrypoint address. The latest one is 0x5FF137D4b0FDCD49DcA30c7CF57E578a026d2789.
-    // But the paymaster does not support the latest version yet.
-    // const entryPointAddress = "0x0576a174D229E3cFA37253523E645A78A0C91B57";
-
-    // TODO: deploy or fetch a factory programatically for the given chain.
-    // This factory is a `TWAccountFactory` deployed on Goerli.
-    const factoryAddress = "0x8bB9B8305543cdF927e22648DC6392b5FF11a38A";
+    const pimlicoUrl = `https://api.pimlico.io/v1/${chain.slug}/rpc?apikey=${pimlico_key}`;
+    // const factoryAddress = "0x9B73b547191170e76238c7C24cF75b8653D7Aa82"; stake issue
+    const factoryAddress = "0x0d59Eb007903EA24c24784E462a34347551d2C1b";
 
     // Create the AA provider
     const config: SmartWalletConfig = {
-      chain: "goerli",
+      chain,
       gasless: true,
       factoryAddress,
+      thirdwebApiKey: "",
+      // bundlerUrl: pimlicoUrl,
+      // paymasterUrl: pimlicoUrl,
     };
 
-    const goerliReadOnlySDK = new ThirdwebSDK("goerli");
-    const factoryContract = await goerliReadOnlySDK.getContract(factoryAddress);
-    const accounts = await factoryContract.events.getEvents("AccountCreated", {
-      filters: {
-        accountAdmin: localWallet.address,
-      },
-    });
+    const accounts = await getAssociatedAccounts(
+      localWallet,
+      factoryAddress,
+      chain
+    );
     console.log(
       `Found ${accounts.length} accounts for local signer`,
-      accounts.map((a) => a.data.account)
+      accounts.map((a) => a.account)
     );
 
-    const smartWallet = SmartWallet.fromLocalWallet(
-      config,
-      localWallet,
-      await localWallet.getAddress()
-    );
+    const smartWallet = new SmartWallet(config);
+    await smartWallet.connect({
+      personalWallet: localWallet,
+      accountId: "username0",
+    });
 
     // now use the SDK normally
-    const sdk = await ThirdwebSDK.fromWallet(smartWallet, "goerli");
+    const sdk = await ThirdwebSDK.fromWallet(smartWallet, chain);
 
     console.log("Smart Account addr:", await sdk.wallet.getAddress());
     console.log("balance:", (await sdk.wallet.balance()).displayValue);
