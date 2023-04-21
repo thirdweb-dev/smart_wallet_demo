@@ -7,12 +7,6 @@ npm install # npm
 yarn # yarn
 ```
 
-- Export your stackup key in .env
-
-```env
-STACKUP_KEY=your_stackup_key
-```
-
 - Run the project:
 
 ```bash
