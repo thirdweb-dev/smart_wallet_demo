@@ -979,10 +979,8 @@
   resolved "https://registry.yarnpkg.com/@thirdweb-dev/generated-abis/-/generated-abis-0.0.1.tgz#0d788d6aff0ac08f11e9eeb9ae4c8321845272a8"
   integrity sha512-vO9/3lSLO8smyyH1QVeYravSTzFwV1nf1C/Im1NBDPdH8//YvcbhtETGGiNfHWpyCvSi0vRYwvf+/7FKdwpDGQ==
 
-"@thirdweb-dev/sdk@0.0.0-dev-7294cb2-20230421230105":
-  version "0.0.0-dev-7294cb2-20230421230105"
-  resolved "https://registry.yarnpkg.com/@thirdweb-dev/sdk/-/sdk-0.0.0-dev-7294cb2-20230421230105.tgz#c70f98aab9eb5ecad7dcd94f22197cbbf6e06738"
-  integrity sha512-aLfwDkM4UDoR3eiGvlvBot2uBz1bl9hfABoNGkPiiETRvoLqJ4w1FXG3LhA2Yqwb+GHYndJ4vQoSapSL/HbX+A==
+"@thirdweb-dev/sdk@3.10.11", "@thirdweb-dev/sdk@file:.yalc/@thirdweb-dev/sdk":
+  version "3.10.11"
   dependencies:
     "@thirdweb-dev/chains" "0.1.12"
     "@thirdweb-dev/contracts-js" "1.3.3"
@@ -1012,10 +1010,8 @@
     ipfs-unixfs-importer "^7.0.1"
     uuid "^9.0.0"
 
-"@thirdweb-dev/wallets@0.0.0-dev-7294cb2-20230421230105":
-  version "0.0.0-dev-7294cb2-20230421230105"
-  resolved "https://registry.yarnpkg.com/@thirdweb-dev/wallets/-/wallets-0.0.0-dev-7294cb2-20230421230105.tgz#50870c9914ac31bfabd5fcad365af17432c68396"
-  integrity sha512-hzylOG+RIYLNqJHlF0IX+5C4uaWAiDowq6mrA535q4iQj8iJi/YDAJF4MHLvvcF6uSBPs4Gmv6h0DfjpfmqHGA==
+"@thirdweb-dev/wallets@file:.yalc/@thirdweb-dev/wallets":
+  version "0.2.16"
   dependencies:
     "@account-abstraction/contracts" "^0.5.0"
     "@account-abstraction/sdk" "^0.5.0"
@@ -1026,7 +1022,7 @@
     "@safe-global/safe-ethers-adapters" "^0.1.0-alpha.16"
     "@safe-global/safe-ethers-lib" "^1.9.2"
     "@thirdweb-dev/chains" "0.1.12"
-    "@thirdweb-dev/sdk" "0.0.0-dev-7294cb2-20230421230105"
+    "@thirdweb-dev/sdk" "3.10.11"
     "@walletconnect/ethereum-provider" "~2.4.6"
     "@walletconnect/jsonrpc-http-connection" "^1.0.0"
     "@walletconnect/jsonrpc-provider" "^1.0.3"
