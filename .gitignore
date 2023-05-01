@@ -1,5 +1,6 @@
 node_modules
 .env
 wallet.json
+wallet-2.json
 .yalc
 yalc.lock
