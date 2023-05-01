@@ -1,5 +1,10 @@
 import { config } from "dotenv";
-import { SmartContract, ThirdwebSDK, Transaction } from "@thirdweb-dev/sdk";
+import {
+  SmartContract,
+  ThirdwebSDK,
+  Transaction,
+  TransactionError,
+} from "@thirdweb-dev/sdk";
 import {
   getSmartWalletAddress,
   getAllSmartWallets,
@@ -8,25 +13,14 @@ import {
   SmartWalletConfig,
 } from "@thirdweb-dev/wallets";
 import { LocalWalletNode } from "@thirdweb-dev/wallets/evm/wallets/local-wallet-node";
-import { BaseGoerli, Chain, Goerli, Mumbai } from "@thirdweb-dev/chains";
+import { BaseGoerli, Chain, Goerli } from "@thirdweb-dev/chains";
 
 config();
 
-const chain = Goerli;
-// const factoryAddress = "0xe448A5878866dD47F61C6654Ee297631eEb98966"; // old impl
-const factoryAddress = "0x1EbfDd6aFbACaF5BFC877bA7111cB5f5DDabb53c"; // goerli
+const chain = BaseGoerli;
+// const factoryAddress = "0x1EbfDd6aFbACaF5BFC877bA7111cB5f5DDabb53c"; // goerli
 // const factoryAddress = "0x72a3c3c93890DE1038cf701709294E8f4D5E5A7e"; // simpleAccount factory
-// const factoryAddress = "0x88d9A32D459BBc7B77fc912d9048926dEd78986B"; // base-goerli
-
-const claimNFT = async (sdk: ThirdwebSDK) => {
-  const contract = await sdk.getContract(
-    "0x884d4bf2Ca59C1b195b24d27D1050dEC165CccF6" // goerli
-  );
-  console.log("claiming nft");
-  const tx = await contract.erc1155.claim.prepare(0, 1);
-  return tx.execute();
-  // console.log("claimed nft", tx.receipt.transactionHash);
-};
+const factoryAddress = "0x88d9A32D459BBc7B77fc912d9048926dEd78986B"; // base-goerli
 
 const prepareClaimNFT = async (sdk: ThirdwebSDK) => {
   const contract = await sdk.getContract(
@@ -35,7 +29,6 @@ const prepareClaimNFT = async (sdk: ThirdwebSDK) => {
   console.log("claiming nft");
   const tx = await contract.erc1155.claim.prepare(0, 1);
   return tx;
-  // console.log("claimed nft", tx.receipt.transactionHash);
 };
 
 const prepareClaimToken = async (sdk: ThirdwebSDK) => {
@@ -71,6 +64,40 @@ const claimToken = async (sdk: ThirdwebSDK) => {
   console.timeEnd("wait for confirmation");
   console.timeEnd("claim");
   console.log("claimed", receipt.transactionHash);
+};
+
+const playCatAttack = async (
+  sdk: ThirdwebSDK,
+  personalWalletAddress: string
+) => {
+  const contract = await sdk.getContract(
+    "0xDDB6DcCE6B794415145Eb5cAa6CD335AEdA9C272" // cat attack
+  );
+  const balance = await contract.erc1155.balance(0);
+  if (balance.gt(0)) {
+    console.log("kitten already claimed, transfering");
+    await contract.erc1155.transfer(personalWalletAddress, 0, 1);
+    return;
+  }
+  const balance1 = await contract.erc1155.balance(1);
+  if (balance1.gt(0)) {
+    console.log("Grumpy cat, burning");
+    await contract.erc1155.burn(1, 1);
+    return;
+  }
+  const balance2 = await contract.erc1155.balance(2);
+  if (balance2.gt(0)) {
+    try {
+      console.log("Ninja cat, attacking");
+      await contract.call("attack", [personalWalletAddress]);
+    } catch (e) {
+      console.log((e as TransactionError)?.reason);
+    }
+    return;
+  }
+  console.log("claiming kitten");
+  const tx = await contract.call("claimKitten");
+  console.log("claimed kitten", tx.receipt.transactionHash);
 };
 
 const addSigner = async (localWallet: LocalWalletNode) => {
@@ -129,32 +156,12 @@ const main = async () => {
     const personalWalletAddress = await localWallet.getAddress();
     console.log("Local signer addr:", personalWalletAddress);
 
-    // AA Config
-    // const stackup_key = process.env.STACKUP_KEY as string;
-    // const pimlico_key = process.env.PIMLICO_KEY as string;
-    const pimlicoUrl = `https://bundler-lite-base-goerli.pimlico.io/rpc`;
-    // const stackupBundler =
-    //   "https://api.stackup.sh/v1/node/8b86aa9935d85195342ada91f1a9671348f454bdced0bc91be7828d75046591f";
-    // const stackupRpc =
-    //   "https://api.stackup.sh/api/v1/paymaster/8b86aa9935d85195342ada91f1a9671348f454bdced0bc91be7828d75046591f";
-    const stagingUrl = `https://${chain.slug}.bundler-staging.thirdweb.com`;
-
     // Create the AA provider
     const config: SmartWalletConfig = {
       chain,
       gasless: true,
       factoryAddress,
       thirdwebApiKey: "",
-      // bundlerUrl: pimlicoUrl,
-      // paymasterUrl: pimlicoUrl,
-      // factoryInfo: {
-      //   createAccount: async (factory: SmartContract, owner: string) => {
-      //     return factory.prepare("createAccount", [owner, accountId]);
-      //   },
-      //   getAccountAddress: async (factory, owner) => {
-      //     return factory.call("getAddress", [owner, accountId]);
-      //   },
-      // },
     };
 
     const accounts = await getAllSmartWallets(
@@ -162,7 +169,7 @@ const main = async () => {
       factoryAddress,
       personalWalletAddress
     );
-    console.log(`Found ${accounts} accounts for local signer`, accounts);
+    console.log(`Found accounts for local signer`, accounts);
 
     const isWalletDeployed = await isSmartWalletDeployed(
       chain,
@@ -182,8 +189,9 @@ const main = async () => {
     console.log("balance:", (await sdk.wallet.balance()).displayValue);
 
     console.log("Claiming via SDK");
-    await claimToken(sdk);
-    await batchTransaction(smartWallet, sdk);
+    // await claimToken(sdk);
+    // await batchTransaction(smartWallet, sdk);
+    await playCatAttack(sdk, personalWalletAddress);
 
     console.log("Done!");
   } catch (e) {
