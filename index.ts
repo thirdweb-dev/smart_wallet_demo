@@ -17,10 +17,10 @@ import { BaseGoerli, Chain, Goerli } from "@thirdweb-dev/chains";
 
 config();
 
-const chain = BaseGoerli;
-// const factoryAddress = "0x1EbfDd6aFbACaF5BFC877bA7111cB5f5DDabb53c"; // goerli
+const chain = Goerli;
+const factoryAddress = "0x1EbfDd6aFbACaF5BFC877bA7111cB5f5DDabb53c"; // goerli
 // const factoryAddress = "0x72a3c3c93890DE1038cf701709294E8f4D5E5A7e"; // simpleAccount factory
-const factoryAddress = "0x88d9A32D459BBc7B77fc912d9048926dEd78986B"; // base-goerli
+// const factoryAddress = "0x88d9A32D459BBc7B77fc912d9048926dEd78986B"; // base-goerli
 
 const prepareClaimNFT = async (sdk: ThirdwebSDK) => {
   const contract = await sdk.getContract(
@@ -189,9 +189,9 @@ const main = async () => {
     console.log("balance:", (await sdk.wallet.balance()).displayValue);
 
     console.log("Claiming via SDK");
-    // await claimToken(sdk);
-    // await batchTransaction(smartWallet, sdk);
-    await playCatAttack(sdk, personalWalletAddress);
+    await claimToken(sdk);
+    await batchTransaction(smartWallet, sdk);
+    // await playCatAttack(sdk, personalWalletAddress);
 
     console.log("Done!");
   } catch (e) {
