@@ -6,7 +6,7 @@ Install dependencies:
 yarn install
 ```
 
-- Run the project:
+Run the project:
 
 ```bash
 yarn dev # yarn
