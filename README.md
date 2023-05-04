@@ -9,7 +9,7 @@ yarn install
 Run the project:
 
 ```bash
-yarn dev # yarn
+yarn dev
 ```
 
 ## Configuration
