@@ -22,18 +22,18 @@ import {
 
 config();
 
-// CONFIG
+// Put your chain here
+const chain = Goerli;
+// Put your thirdweb API key here (or in .env)
+const thirdwebApiKey = process.env.THIRDWEB_API_KEY as string;
+
+// Factory addresses for each chain
 const factories = {
   [Goerli.chainId]: "0xaB15553D83b47cac2DDfD8D4753D740e69930834",
   [BaseGoerli.chainId]: "0x88d9A32D459BBc7B77fc912d9048926dEd78986B",
   [OptimismGoerli.chainId]: "0x54ec360704b2e9E4e6499a732b78094D6d78e37B",
   [ScrollAlphaTestnet.chainId]: "0x2eaDAa60dBB74Ead3E20b23E4C5A0Dd789932846",
 };
-
-// Put your chain here
-const chain = Goerli;
-// Put your thirdweb API key here (or in .env)
-const thirdwebApiKey = process.env.THIRDWEB_API_KEY as string;
 
 const main = async () => {
   try {
