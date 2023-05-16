@@ -58,6 +58,22 @@ export const claimERC721Token = async (sdk: ThirdwebSDK) => {
   console.log("claimed", tx[0].receipt.transactionHash);
 };
 
+export const claimSepoliaNFT = async (sdk: ThirdwebSDK) => {
+  const contract = await sdk.getContract(
+    "0x8fb9023405Cc2fDa7C1BB3B963767D121cAa698A" // sepolia
+  );
+  const tx = await contract.erc1155.claim(0, 1);
+  console.log("claimed", tx.receipt.transactionHash);
+};
+
+export const claimMumbaiNFT = async (sdk: ThirdwebSDK) => {
+  const contract = await sdk.getContract(
+    "0xD170A53dADb19f62C78AB9982236857B71dbc83A" // mumbai
+  );
+  const tx = await contract.erc1155.claim(0, 1);
+  console.log("claimed", tx.receipt.transactionHash);
+};
+
 export const playCatAttack = async (
   sdk: ThirdwebSDK,
   personalWalletAddress: string
