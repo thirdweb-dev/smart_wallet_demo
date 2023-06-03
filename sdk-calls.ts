@@ -74,6 +74,14 @@ export const claimMumbaiNFT = async (sdk: ThirdwebSDK) => {
   console.log("claimed", tx.receipt.transactionHash);
 };
 
+export const claimCeloToken = async (sdk: ThirdwebSDK) => {
+  const contract = await sdk.getContract(
+    "0x22AD454415D786D898468bEfBAF4e7d2145A86F9" // celo alfajores
+  );
+  const tx = await contract.erc20.claim(1);
+  console.log("claimed", tx.receipt.transactionHash);
+};
+
 export const playCatAttack = async (
   sdk: ThirdwebSDK,
   personalWalletAddress: string
