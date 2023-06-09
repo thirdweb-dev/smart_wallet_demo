@@ -914,7 +914,12 @@
     "@stablelib/random" "^1.0.2"
     "@stablelib/wipe" "^1.0.1"
 
-"@thirdweb-dev/chains@0.1.19", "@thirdweb-dev/chains@^0.1.11":
+"@thirdweb-dev/chains@0.0.0-dev-2067f33-20230609035419":
+  version "0.0.0-dev-2067f33-20230609035419"
+  resolved "https://registry.yarnpkg.com/@thirdweb-dev/chains/-/chains-0.0.0-dev-2067f33-20230609035419.tgz#1f5a1b3a4695e7c87716b5d41c8b309f12ef2cfb"
+  integrity sha512-+cUWOLSgAR6o5//g3RtN/FpA8b4tcK2IOH72oGq8ATlqqVgVmjc3T1uhPnZVWFGGJcx7CgS4lCgfEjYIk/n5oQ==
+
+"@thirdweb-dev/chains@^0.1.11":
   version "0.1.19"
   resolved "https://registry.yarnpkg.com/@thirdweb-dev/chains/-/chains-0.1.19.tgz#48dfd165eaa4667e635adaf78ad9be9278cf1478"
   integrity sha512-v4xxfpV/4hvvjupD7ZYH6bdEqFQXnJe0w3nt0OM/hS35tGYASd2MpbQ1NajF+/74fx74wnCpluy+sCEnumPX5g==
@@ -936,12 +941,12 @@
   resolved "https://registry.yarnpkg.com/@thirdweb-dev/generated-abis/-/generated-abis-0.0.1.tgz#0d788d6aff0ac08f11e9eeb9ae4c8321845272a8"
   integrity sha512-vO9/3lSLO8smyyH1QVeYravSTzFwV1nf1C/Im1NBDPdH8//YvcbhtETGGiNfHWpyCvSi0vRYwvf+/7FKdwpDGQ==
 
-"@thirdweb-dev/sdk@3.10.20", "@thirdweb-dev/sdk@^3.10.20":
-  version "3.10.20"
-  resolved "https://registry.yarnpkg.com/@thirdweb-dev/sdk/-/sdk-3.10.20.tgz#330293ff7b85d57719a071657a8170a0bd620a67"
-  integrity sha512-xnscN3fAvo91rgFfhXkz7LmfBA1shOzkGjI+wXbB/ZwvvzgbN+k1AiLAbygXc+iKwPKQdDboMtExXnI6cdFy3g==
+"@thirdweb-dev/sdk@0.0.0-dev-2067f33-20230609035419":
+  version "0.0.0-dev-2067f33-20230609035419"
+  resolved "https://registry.yarnpkg.com/@thirdweb-dev/sdk/-/sdk-0.0.0-dev-2067f33-20230609035419.tgz#7858dfda989250b7b5aad2a04f2f8c1c0321df2f"
+  integrity sha512-2EBpv71Q52bjuOVBDJL7G1PHyw2kDN6wu+7Cy/d5DmPYLSrgKCACdwjrmmOEzsEi2LmI4qxRtIexuk0L8iUecQ==
   dependencies:
-    "@thirdweb-dev/chains" "0.1.19"
+    "@thirdweb-dev/chains" "0.0.0-dev-2067f33-20230609035419"
     "@thirdweb-dev/contracts-js" "1.3.5"
     "@thirdweb-dev/generated-abis" "0.0.1"
     "@thirdweb-dev/storage" "1.1.4"
@@ -969,10 +974,10 @@
     ipfs-unixfs-importer "^7.0.1"
     uuid "^9.0.0"
 
-"@thirdweb-dev/wallets@^0.2.25":
-  version "0.2.25"
-  resolved "https://registry.yarnpkg.com/@thirdweb-dev/wallets/-/wallets-0.2.25.tgz#c3bb5bdc4665de390a891422da331c2bf3cbfb15"
-  integrity sha512-s2MfQWjBFeUfJsZcIhBt4atWo2ndMIOD6uKRtjIoOInDqMqtL3bRaG3XbSxzd0ahmVcyzoRqwxccwAbpNYjbng==
+"@thirdweb-dev/wallets@0.0.0-dev-2067f33-20230609035419":
+  version "0.0.0-dev-2067f33-20230609035419"
+  resolved "https://registry.yarnpkg.com/@thirdweb-dev/wallets/-/wallets-0.0.0-dev-2067f33-20230609035419.tgz#94cec704ef7da28bb83ea677cee48ab215199222"
+  integrity sha512-ShPXSFkmx5CDIBEM8Ou0DM/+43ELr1pd/ky52hVyPCazCseBY/iURjB2FL3mcKFokrGzF3118ojho1at0gxNCw==
   dependencies:
     "@account-abstraction/contracts" "^0.5.0"
     "@account-abstraction/sdk" "^0.5.0"
@@ -985,8 +990,8 @@
     "@safe-global/safe-core-sdk" "^3.3.2"
     "@safe-global/safe-ethers-adapters" "^0.1.0-alpha.16"
     "@safe-global/safe-ethers-lib" "^1.9.2"
-    "@thirdweb-dev/chains" "0.1.19"
-    "@thirdweb-dev/sdk" "3.10.20"
+    "@thirdweb-dev/chains" "0.0.0-dev-2067f33-20230609035419"
+    "@thirdweb-dev/sdk" "0.0.0-dev-2067f33-20230609035419"
     "@walletconnect/client" "^1.8.0"
     "@walletconnect/core" "2.7.3"
     "@walletconnect/ethereum-provider" "2.6.0"

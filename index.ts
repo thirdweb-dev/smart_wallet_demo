@@ -1,11 +1,6 @@
 import { config } from "dotenv";
 import { ThirdwebSDK } from "@thirdweb-dev/sdk";
-import {
-  getAllSmartWallets,
-  isSmartWalletDeployed,
-  SmartWallet,
-  SmartWalletConfig,
-} from "@thirdweb-dev/wallets";
+import { SmartWallet, SmartWalletConfig } from "@thirdweb-dev/wallets";
 import { LocalWalletNode } from "@thirdweb-dev/wallets/evm/wallets/local-wallet-node";
 import {
   BaseGoerli,
@@ -65,23 +60,7 @@ const main = async () => {
       gasless: true,
       factoryAddress,
       thirdwebApiKey,
-      bundlerUrl: `https://api.pimlico.io/v1/celo-alfajores-testnet/rpc?apikey=${process.env.PIMLICO_KEY}`,
-      paymasterUrl: `https://api.pimlico.io/v1/celo-alfajores-testnet/rpc?apikey=${process.env.PIMLICO_KEY}`,
     };
-
-    // const accounts = await getAllSmartWallets(
-    //   chain,
-    //   factoryAddress,
-    //   personalWalletAddress
-    // );
-    // console.log(`Found accounts for local signer`, accounts);
-
-    // const isWalletDeployed = await isSmartWalletDeployed(
-    //   chain,
-    //   factoryAddress,
-    //   personalWalletAddress
-    // );
-    // console.log(`Is smart wallet deployed?`, isWalletDeployed);
 
     // connect the smart wallet
     const smartWallet = new SmartWallet(config);
@@ -89,10 +68,13 @@ const main = async () => {
       personalWallet: localWallet,
     });
 
+    const isWalletDeployed = await smartWallet.isDeployed();
+    console.log(`Is smart wallet deployed?`, isWalletDeployed);
+
     // now use the SDK normally
     const sdk = await ThirdwebSDK.fromWallet(smartWallet, chain);
     console.log("Smart Account addr:", await sdk.wallet.getAddress());
-    console.log("balance:", (await sdk.wallet.balance()).displayValue);
+    console.log("native balance:", (await sdk.wallet.balance()).displayValue);
 
     console.log("Executing contract call via SDK...");
     switch (chain.chainId as number) {
@@ -113,8 +95,6 @@ const main = async () => {
         await claimSepoliaNFT(sdk);
         break;
       case CeloAlfajoresTestnet.chainId:
-        // const m = await sdk.wallet.sign("hello");
-        // console.log("m", m);
         await claimCeloToken(sdk);
         break;
     }

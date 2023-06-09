@@ -32,8 +32,6 @@ export const claimToken = async (sdk: ThirdwebSDK) => {
   );
   console.timeEnd("contract");
 
-  const tokenBalance = await contract.erc20.balance();
-  console.log("token balance:", tokenBalance.displayValue);
   console.time("claim");
   console.time("prepare");
   const tx = await contract.erc20.claim.prepare(1);
@@ -48,6 +46,8 @@ export const claimToken = async (sdk: ThirdwebSDK) => {
   console.timeEnd("wait for confirmation");
   console.timeEnd("claim");
   console.log("claimed", receipt.transactionHash);
+  const tokenBalance = await contract.erc20.balance();
+  console.log("token balance:", tokenBalance.displayValue);
 };
 
 export const claimERC721Token = async (sdk: ThirdwebSDK) => {
@@ -80,6 +80,8 @@ export const claimCeloToken = async (sdk: ThirdwebSDK) => {
   );
   const tx = await contract.erc20.claim(1);
   console.log("claimed", tx.receipt.transactionHash);
+  const tokenBalance = await contract.erc20.balance();
+  console.log("token balance:", tokenBalance.displayValue);
 };
 
 export const playCatAttack = async (
