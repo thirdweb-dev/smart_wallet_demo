@@ -1,14 +1,10 @@
 import { config } from "dotenv";
 import { ThirdwebSDK } from "@thirdweb-dev/sdk";
-import {
-  getAllSmartWallets,
-  isSmartWalletDeployed,
-  SmartWallet,
-  SmartWalletConfig,
-} from "@thirdweb-dev/wallets";
+import { SmartWallet, SmartWalletConfig } from "@thirdweb-dev/wallets";
 import { LocalWalletNode } from "@thirdweb-dev/wallets/evm/wallets/local-wallet-node";
 import {
   BaseGoerli,
+  CeloAlfajoresTestnet,
   Goerli,
   Mumbai,
   OptimismGoerli,
@@ -17,6 +13,7 @@ import {
 } from "@thirdweb-dev/chains";
 import {
   batchTransaction,
+  claimCeloToken,
   claimERC721Token,
   claimMumbaiNFT,
   claimSepoliaNFT,
@@ -27,7 +24,7 @@ import {
 config();
 
 // Put your chain here
-const chain = Mumbai;
+const chain = CeloAlfajoresTestnet;
 // Put your thirdweb API key here (or in .env)
 const thirdwebApiKey = process.env.THIRDWEB_API_KEY as string;
 
@@ -39,6 +36,7 @@ const factories = {
   [ScrollAlphaTestnet.chainId]: "0x2eaDAa60dBB74Ead3E20b23E4C5A0Dd789932846",
   [Mumbai.chainId]: "0x272A90FF4403473d766127A3CCB7ff1d9E7d45A2",
   [Sepolia.chainId]: "0x9D4409c65AC036860F5CAAF34D5b69ae324A7075",
+  [CeloAlfajoresTestnet.chainId]: "0xE646849d679602F2588CA8eEDf0b261B1aB085AF",
 };
 
 const main = async () => {
@@ -64,30 +62,19 @@ const main = async () => {
       thirdwebApiKey,
     };
 
-    const accounts = await getAllSmartWallets(
-      chain,
-      factoryAddress,
-      personalWalletAddress
-    );
-    console.log(`Found accounts for local signer`, accounts);
-
-    const isWalletDeployed = await isSmartWalletDeployed(
-      chain,
-      factoryAddress,
-      personalWalletAddress
-    );
-    console.log(`Is smart wallet deployed?`, isWalletDeployed);
-
     // connect the smart wallet
     const smartWallet = new SmartWallet(config);
     await smartWallet.connect({
       personalWallet: localWallet,
     });
 
+    const isWalletDeployed = await smartWallet.isDeployed();
+    console.log(`Is smart wallet deployed?`, isWalletDeployed);
+
     // now use the SDK normally
     const sdk = await ThirdwebSDK.fromWallet(smartWallet, chain);
     console.log("Smart Account addr:", await sdk.wallet.getAddress());
-    console.log("balance:", (await sdk.wallet.balance()).displayValue);
+    console.log("native balance:", (await sdk.wallet.balance()).displayValue);
 
     console.log("Executing contract call via SDK...");
     switch (chain.chainId as number) {
@@ -106,6 +93,9 @@ const main = async () => {
         break;
       case Sepolia.chainId:
         await claimSepoliaNFT(sdk);
+        break;
+      case CeloAlfajoresTestnet.chainId:
+        await claimCeloToken(sdk);
         break;
     }
   } catch (e) {
