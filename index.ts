@@ -1,5 +1,5 @@
 import { config } from "dotenv";
-import { ThirdwebSDK } from "@thirdweb-dev/sdk";
+import { CommonSymbolSchema, ThirdwebSDK } from "@thirdweb-dev/sdk";
 import { SmartWallet, SmartWalletConfig } from "@thirdweb-dev/wallets";
 import { LocalWalletNode } from "@thirdweb-dev/wallets/evm/wallets/local-wallet-node";
 import {
@@ -24,9 +24,9 @@ import {
 config();
 
 // Put your chain here
-const chain = CeloAlfajoresTestnet;
-// Put your thirdweb API key here (or in .env)
-const thirdwebApiKey = process.env.THIRDWEB_API_KEY as string;
+const chain = Goerli;
+// Put your thirdweb secret key here (or in .env)
+const secretKey = process.env.THIRDWEB_API_KEY as string;
 
 // Factory addresses for each chain
 const factories = {
@@ -35,7 +35,7 @@ const factories = {
   [OptimismGoerli.chainId]: "0x54ec360704b2e9E4e6499a732b78094D6d78e37B",
   [ScrollAlphaTestnet.chainId]: "0x2eaDAa60dBB74Ead3E20b23E4C5A0Dd789932846",
   [Mumbai.chainId]: "0x272A90FF4403473d766127A3CCB7ff1d9E7d45A2",
-  [Sepolia.chainId]: "0x9D4409c65AC036860F5CAAF34D5b69ae324A7075",
+  [Sepolia.chainId]: "0x295E69d392fcED5dc22d4767D86351CF2862145b",
   [CeloAlfajoresTestnet.chainId]: "0xE646849d679602F2588CA8eEDf0b261B1aB085AF",
 };
 
@@ -59,7 +59,9 @@ const main = async () => {
       chain,
       gasless: true,
       factoryAddress,
-      thirdwebApiKey,
+      secretKey: secretKey,
+      bundlerUrl: `https://${chain.slug}.bundler-staging.thirdweb.com`,
+      paymasterUrl: `https://${chain.slug}.bundler-staging.thirdweb.com`,
     };
 
     // connect the smart wallet
@@ -73,7 +75,8 @@ const main = async () => {
 
     // now use the SDK normally
     const sdk = await ThirdwebSDK.fromWallet(smartWallet, chain);
-    console.log("Smart Account addr:", await sdk.wallet.getAddress());
+    const smartWalletAddress = await sdk.wallet.getAddress();
+    console.log("Smart Account addr:", smartWalletAddress);
     console.log("native balance:", (await sdk.wallet.balance()).displayValue);
 
     console.log("Executing contract call via SDK...");
