@@ -11,9 +11,9 @@
   "license": "ISC",
   "dependencies": {
     "@account-abstraction/sdk": "^0.5.0",
-    "@thirdweb-dev/chains": "0.0.0-dev-81d8779-20230714182546",
-    "@thirdweb-dev/sdk": "0.0.0-dev-81d8779-20230714182546",
-    "@thirdweb-dev/wallets": "0.0.0-dev-81d8779-20230714182546",
+    "@thirdweb-dev/chains": "^0.1.41-nightly-5ee700e8-20230803010712",
+    "@thirdweb-dev/sdk": "^3.10.44-nightly-5ee700e8-20230803010712",
+    "@thirdweb-dev/wallets": "^1.1.8-nightly-5ee700e8-20230803010712",
     "axios": "^1.3.4",
     "dotenv": "^16.0.3",
     "ethers": "^5"

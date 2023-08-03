@@ -128,7 +128,7 @@ export const addSigner = async (
     storageJsonFile: "wallet-2.json",
   });
   await localWallet2.loadOrCreate({
-    strategy: "mnemonic",
+    strategy: "privateKey",
     encryption: false,
   });
   const accountId2 = await localWallet2.getAddress();

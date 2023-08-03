@@ -48,7 +48,7 @@ const main = async () => {
       chain,
     });
     await localWallet.loadOrCreate({
-      strategy: "mnemonic",
+      strategy: "privateKey",
       encryption: false,
     });
     const personalWalletAddress = await localWallet.getAddress();
