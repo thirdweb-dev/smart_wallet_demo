@@ -60,8 +60,8 @@ const main = async () => {
       gasless: true,
       factoryAddress,
       secretKey: secretKey,
-      bundlerUrl: `https://${chain.slug}.bundler-staging.thirdweb.com`,
-      paymasterUrl: `https://${chain.slug}.bundler-staging.thirdweb.com`,
+      bundlerUrl: `https://${chain.slug}.bundler.thirdweb.com`,
+      paymasterUrl: `https://${chain.slug}.bundler.thirdweb.com`,
     };
 
     // connect the smart wallet
@@ -74,7 +74,9 @@ const main = async () => {
     console.log(`Is smart wallet deployed?`, isWalletDeployed);
 
     // now use the SDK normally
-    const sdk = await ThirdwebSDK.fromWallet(smartWallet, chain);
+    const sdk = await ThirdwebSDK.fromWallet(smartWallet, chain, {
+      secretKey: secretKey,
+    });
     const smartWalletAddress = await sdk.wallet.getAddress();
     console.log("Smart Account addr:", smartWalletAddress);
     console.log("native balance:", (await sdk.wallet.balance()).displayValue);
